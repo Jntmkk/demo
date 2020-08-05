@@ -2,9 +2,9 @@ web3j:
   http-timeout-seconds: 300
   client-address: http://127.0.0.1:7545
   #  private
-  reg: "0x914a78d411c6142e1354c71e09da8fac30214e14"
-  summary: "0xf00d90249d0895f285191d70a2547605a92ef86f"
-
+  dc: "0xd518963389729b2f6dfbec21a18034a70a604c6d"
+  tc: "0x4a2fb652bb4d220650bd4a8115906d0e869d116b"
+  uc: "0xf630d3a406cecaaf64011d891694c2a586b473ab"
 
 # App Properties
 bezkoder:
