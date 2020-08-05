@@ -1,6 +1,8 @@
 package xyz.example.demo.controller;
 
 import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -29,6 +31,7 @@ import xyz.example.demo.models.User;
 import xyz.example.demo.repository.CrowdBCTaskRepository;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.repository.UserRepository;
+import xyz.example.demo.service.OneNetService;
 import xyz.example.demo.service.UserDetailsService;
 
 import javax.validation.Valid;
@@ -49,7 +52,8 @@ public class CrowdBCController {
     DeployedContractInfoRepository contractInfoRepository;
     @Autowired
     Register register;
-
+    @Autowired
+    OneNetService oneNetService;
     public CrowdBCController(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, UserSummary userSummary, CrowdBCTaskRepository crowdBCTaskRepository) {
         this.web3j = web3j;
         this.credentials = credentials;
@@ -57,7 +61,6 @@ public class CrowdBCController {
         this.userSummary = userSummary;
         this.crowdBCTaskRepository = crowdBCTaskRepository;
     }
-
     Web3j web3j;
     Credentials credentials;
     ContractGasProvider contractGasProvider;
@@ -84,6 +87,13 @@ public class CrowdBCController {
         deployTaskContract(crowdBCTask, username);
         crowdBCTaskRepository.save(crowdBCTask);
         return "success";
+    }
+
+    @ApiOperation(value = "发送onenet物联网请求")
+
+    @PostMapping("onenet/command")
+    public JSONObject command(@PathVariable String cmd, @PathVariable String deviceId) {
+        return null;
     }
 
     private void deployTaskContract(CrowdBCTask crowdBCTask, String username) throws Exception {

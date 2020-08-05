@@ -3,6 +3,7 @@ package xyz.example.demo.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
+import org.springframework.stereotype.Component;
 
 @Api(tags = "OneNet service")
 public interface OneNetService {
