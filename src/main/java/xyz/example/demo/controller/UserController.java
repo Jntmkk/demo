@@ -1,17 +1,13 @@
 package xyz.example.demo.controller;
 
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.example.demo.contract.Register;
 import xyz.example.demo.models.User;
 
 
-import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 

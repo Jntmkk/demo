@@ -1,7 +1,5 @@
 package xyz.example.demo.controller;
 
-import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -10,21 +8,13 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.utils.Convert;
-import xyz.example.demo.contract.Register;
-import xyz.example.demo.contract.TaskManagement;
-import xyz.example.demo.contract.UserSummary;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.DeployedContractInfo;
 import xyz.example.demo.models.User;
@@ -32,15 +22,12 @@ import xyz.example.demo.repository.CrowdBCTaskRepository;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.repository.UserRepository;
 import xyz.example.demo.service.OneNetService;
-import xyz.example.demo.service.UserDetailsService;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @Data
@@ -50,21 +37,23 @@ import java.util.Set;
 public class CrowdBCController {
     @Autowired
     DeployedContractInfoRepository contractInfoRepository;
-    @Autowired
-    Register register;
+    //    @Autowired
+//    Register register;
     @Autowired
     OneNetService oneNetService;
-    public CrowdBCController(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, UserSummary userSummary, CrowdBCTaskRepository crowdBCTaskRepository) {
+
+    public CrowdBCController(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, CrowdBCTaskRepository crowdBCTaskRepository) {
         this.web3j = web3j;
         this.credentials = credentials;
         this.contractGasProvider = contractGasProvider;
-        this.userSummary = userSummary;
+//        this.userSummary = userSummary;
         this.crowdBCTaskRepository = crowdBCTaskRepository;
     }
+
     Web3j web3j;
     Credentials credentials;
     ContractGasProvider contractGasProvider;
-    UserSummary userSummary;
+    //    UserSummary userSummary;
     CrowdBCTaskRepository crowdBCTaskRepository;
     @Autowired
     UserRepository userRepository;
@@ -90,10 +79,11 @@ public class CrowdBCController {
     }
 
     @ApiOperation(value = "发送onenet物联网请求")
-
+    @ApiImplicitParams({@ApiImplicitParam(name = "命令", value = "cmd", required = true),
+            @ApiImplicitParam(name = "设备ID", value = "deviceId", required = true)})
     @PostMapping("onenet/command")
     public JSONObject command(@PathVariable String cmd, @PathVariable String deviceId) {
-        return null;
+        return oneNetService.sendCommand(deviceId, cmd);
     }
 
     private void deployTaskContract(CrowdBCTask crowdBCTask, String username) throws Exception {
@@ -104,7 +94,7 @@ public class CrowdBCController {
 //        Transfer.sendFunds(web3j, Credentials.create(user.getPrivateKey()), "0x1d2Ed2151ebb0101c85Af0a33f4768052C2D52Ca", BigDecimal.valueOf(1.0), Convert.Unit.ETHER).send();
         log.info("deploy user:" + username + "`s contract");
         DeployedContractInfo deployedContractInfo = contractInfoRepository.findByContractNameOrderByIdDesc("Register").get(0);
-        TaskManagement send = TaskManagement.deploy(web3j, Credentials.create(user.getPrivateKey()), contractGasProvider, BigInteger.valueOf(70L), deployedContractInfo.getContractAddress(), deployedContractInfo.getManagerAddress(), username, crowdBCTask.getDescription(), crowdBCTask.getDeposit(), crowdBCTask.getDeadline(), crowdBCTask.getMaxWorkerNum(), crowdBCTask.getMinReputation(), crowdBCTask.getTaskType(), crowdBCTask.getPointer()).send();
+//        TaskManagement send = TaskManagement.deploy(web3j, Credentials.create(user.getPrivateKey()), contractGasProvider, BigInteger.valueOf(70L), deployedContractInfo.getContractAddress(), deployedContractInfo.getManagerAddress(), username, crowdBCTask.getDescription(), crowdBCTask.getDeposit(), crowdBCTask.getDeadline(), crowdBCTask.getMaxWorkerNum(), crowdBCTask.getMinReputation(), crowdBCTask.getTaskType(), crowdBCTask.getPointer()).send();
 
     }
 }
