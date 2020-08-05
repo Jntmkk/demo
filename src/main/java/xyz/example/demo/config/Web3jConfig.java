@@ -1,16 +1,12 @@
 package xyz.example.demo.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.crypto.Credentials;
 import org.web3j.tx.gas.ContractGasProvider;
-import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.web3j.DefaultGasProvider;
-import xyz.example.demo.web3j.RegisterFactoryBean;
-import xyz.example.demo.web3j.UserSummaryFactoryBean;
 
 @Configuration
 public class Web3jConfig {
@@ -32,15 +28,15 @@ public class Web3jConfig {
         return new DefaultGasProvider();
     }
 
-    @ConditionalOnProperty("web3j.reg")
-    @Bean
-    public RegisterFactoryBean registerFactoryBean() {
-        return new RegisterFactoryBean(reg);
-    }
-
-    @ConditionalOnProperty("web3j.summary")
-    @Bean
-    UserSummaryFactoryBean userSummaryFactoryBean() {
-        return new UserSummaryFactoryBean(summary);
-    }
+//    @ConditionalOnProperty("web3j.reg")
+//    @Bean
+//    public RegisterFactoryBean registerFactoryBean() {
+//        return new RegisterFactoryBean(reg);
+//    }
+//
+//    @ConditionalOnProperty("web3j.summary")
+//    @Bean
+//    UserSummaryFactoryBean userSummaryFactoryBean() {
+//        return new UserSummaryFactoryBean(summary);
+//    }
 }
