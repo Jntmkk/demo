@@ -24,7 +24,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder().title("CrowdBC Restful API")
                 .description("CrowdBC API")
-                .termsOfServiceUrl("http://127.0.0.1:8080")
+//                .termsOfServiceUrl("http://127.0.0.1:8080")
                 .version("1.0.0")
                 .build();
     }
