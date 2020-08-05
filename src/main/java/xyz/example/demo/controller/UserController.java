@@ -16,8 +16,8 @@ import java.util.Set;
 @Validated
 @Api(tags = "user information")
 public class UserController {
-    @Autowired
-    private Register register;
+//    @Autowired
+//    private Register register;
     @Data
     public static class UserInfo {
         Set<String> roles = new HashSet<>();

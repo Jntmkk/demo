@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/auth")
 @Api(tags = "处理用户管理")
 public class AuthController {
-    @Autowired
-    Register register;
-    @Autowired
-    UserSummary userSummary;
+//    @Autowired
+//    Register register;
+//    @Autowired
+//    UserSummary userSummary;
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -138,7 +138,7 @@ public class AuthController {
         user.setRoles(roles);
         user.setPrivateKey(signUpRequest.getPrivateKey());
         userRepository.save(user);
-        register.register(user.getAddress(), user.getUsername(), user.getPassword(), "").send();
+//        register.register(user.getAddress(), user.getUsername(), user.getPassword(), "").send();
 
         return "User registered successfully!";
 //        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
