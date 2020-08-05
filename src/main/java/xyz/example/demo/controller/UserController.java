@@ -1,25 +1,40 @@
 package xyz.example.demo.controller;
 
+import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.Api;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.example.demo.bean.User;
+import xyz.example.demo.contract.Register;
+import xyz.example.demo.models.User;
+
+
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user/")
+@Validated
+@Api(tags = "user information")
 public class UserController {
-    @PostMapping("/add")
-    public boolean addUser(@RequestBody User user) {
-        return false;
+    @Autowired
+    private Register register;
+    @Data
+    public static class UserInfo {
+        Set<String> roles = new HashSet<>();
+        String introduction = "I am a super administrator";
+        String avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
+        String name = "Super Admin";
+        int reputation = 6;
     }
-    @GetMapping("/find/{id}")
-    public User findById(@PathVariable("id") int id) {
-        return new User();
+
+    @GetMapping("info")
+    public User info() throws Exception {
+
+        return null;
     }
-    @PutMapping("/update")
-    public boolean update(@RequestBody User user) {
-        return true;
-    }
-    @DeleteMapping("/delete/{id}")
-    public boolean delete(@PathVariable("id") int id) {
-        return true;
-    }
+
 }

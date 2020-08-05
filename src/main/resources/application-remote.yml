@@ -1,0 +1,19 @@
+web3j:
+  client-address: https://ropsten.infura.io/v3/19458dcba6234c63a77f7843e4562eb5
+  http-timeout-seconds: 300
+  #  client-address: http://127.0.0.1:7545
+  #  private
+  #  reg: 1931676166680d2f06f3985678636cf4bbd94b174b9e5fa3c1bbc6c00ad89013
+  #  summary: 1931676166680d2f06f3985678636cf4bbd94b174b9e5fa3c1bbc6c00ad89013
+  reg: "0xd3724deb8c0a78cab8f5687b210f90bd50b89927"
+  summary: "0x9647b4716fcc7102f74c745f56fc496f20913b3f"
+
+
+# App Properties
+bezkoder:
+  app:
+    jwtSecret: bezKoderSecretKey
+    jwtExpirationMs: 86400000
+    key: 2539897ee3c10e19886c59357f536933a7afed4f0218e16ebef4ea1414792504
+#    key: 1931676166680d2f06f3985678636cf4bbd94b174b9e5fa3c1bbc6c00ad89013
+#d0c05fba5a74bb3fb5af0cb3e01d0e9ac4f59d232f68e63f8a5986d2bcfb71da

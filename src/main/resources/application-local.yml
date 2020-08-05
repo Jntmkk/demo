@@ -1,0 +1,24 @@
+web3j:
+  http-timeout-seconds: 300
+  client-address: http://127.0.0.1:7545
+  #  private
+  reg: "0x914a78d411c6142e1354c71e09da8fac30214e14"
+  summary: "0xf00d90249d0895f285191d70a2547605a92ef86f"
+
+
+# App Properties
+bezkoder:
+  app:
+    jwtSecret: bezKoderSecretKey
+    jwtExpirationMs: 86400000
+    key: d2db4a7b3fbea5a83bffccbbae420450641873c6d2ee65dd551f7b7636df4cb6
+    #d0c05fba5a74bb3fb5af0cb3e01d0e9ac4f59d232f68e63f8a5986d2bcfb71da
+
+# local user
+#   admin1:
+#      addr 0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE
+#      key d2db4a7b3fbea5a83bffccbbae420450641873c6d2ee65dd551f7b7636df4cb6
+#   admin2:
+#     addr 0x9Bcda6C8bED7718D8808d81E11Ba744d5591861f
+#     key f59208fe75a662fd77177b1607a10b1a844eee188f3ee2dbda768b08be348479
+# key
