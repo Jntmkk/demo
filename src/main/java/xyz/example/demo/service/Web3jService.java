@@ -33,4 +33,6 @@ public interface Web3jService {
     User getUserInfo(String userName);
 
     boolean submitTask(CrowdBCTask crowdBCTask);
+
+    void register(User user);
 }
