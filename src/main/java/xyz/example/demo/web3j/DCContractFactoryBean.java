@@ -2,15 +2,18 @@ package xyz.example.demo.web3j;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import xyz.example.demo.bean.DeployedContractAddress;
+import xyz.example.demo.bean.DeployedContracts;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.models.DeployedContractInfo;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
+
 @Slf4j
 public class DCContractFactoryBean extends ContractFactoryBean<DeviceContract> {
     private String key;
     @Autowired
-    DeployedContractInfoRepository infoRepository;
+    DeployedContractAddress deployedContractAddress;
 
     public DCContractFactoryBean(String key) {
         this.key = key;
@@ -35,8 +38,8 @@ public class DCContractFactoryBean extends ContractFactoryBean<DeviceContract> {
             deployedContractInfo.setManagerAddress("");
             deployedContractInfo.setContractName("DeviceContract");
             deployedContractInfo.setContractAddress(send.getContractAddress());
-            infoRepository.save(deployedContractInfo);
-            log.info("deploy contact "+ deployedContractInfo.getContractAddress());
+            deployedContractAddress.setContractAddress(DeployedContracts.DEVICE_CONTRACT, send.getContractAddress());
+            log.info("deploy contact " + deployedContractInfo.getContractAddress());
             return send;
         }
     }

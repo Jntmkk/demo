@@ -2,6 +2,8 @@ package xyz.example.demo.web3j;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import xyz.example.demo.bean.DeployedContractAddress;
+import xyz.example.demo.bean.DeployedContracts;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.DeployedContractInfo;
@@ -10,7 +12,7 @@ import xyz.example.demo.repository.DeployedContractInfoRepository;
 public class TCContractFactoryBean extends ContractFactoryBean<TaskContract> {
     private String key;
     @Autowired
-    DeployedContractInfoRepository infoRepository;
+    DeployedContractAddress deployedContractAddress;
 
     public TCContractFactoryBean(String key) {
         this.key = key;
@@ -29,14 +31,14 @@ public class TCContractFactoryBean extends ContractFactoryBean<TaskContract> {
         if (key.length() == 42) {
             return TaskContract.load(key, web3j, credentials, contractGasProvider);
         } else {
-            DeployedContractInfo userContract = infoRepository.findByContractNameOrderByIdDesc("UserContract").get(0);
-            TaskContract send = TaskContract.deploy(web3j, credentials, contractGasProvider,userContract.getContractAddress()).send();
+            String contractAddress = deployedContractAddress.getContractAddress(DeployedContracts.USER_CONTRACT);
+            TaskContract send = TaskContract.deploy(web3j, credentials, contractGasProvider,contractAddress).send();
             DeployedContractInfo deployedContractInfo = new DeployedContractInfo();
             deployedContractInfo.setManagerPrivateKey(key);
             deployedContractInfo.setManagerAddress("");
             deployedContractInfo.setContractName("TaskContract");
             deployedContractInfo.setContractAddress(send.getContractAddress());
-            infoRepository.save(deployedContractInfo);
+            deployedContractAddress.setContractAddress(DeployedContracts.TASK_CONTRACT,send.getContractAddress());
             log.info("deploy contact "+ deployedContractInfo.getContractAddress());
             return send;
         }

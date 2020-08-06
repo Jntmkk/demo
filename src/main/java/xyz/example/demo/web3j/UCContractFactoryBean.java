@@ -4,14 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import xyz.example.demo.bean.DeployedContractAddress;
+import xyz.example.demo.bean.DeployedContracts;
 import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.DeployedContractInfo;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
 @Slf4j
 public class UCContractFactoryBean extends ContractFactoryBean<UserContract> {
-    private String key;
     @Autowired
-    DeployedContractInfoRepository infoRepository;
+    DeployedContractAddress deployedContractAddress;
+    private String key;
 
     public UCContractFactoryBean(String key) {
         this.key = key;
@@ -36,7 +38,7 @@ public class UCContractFactoryBean extends ContractFactoryBean<UserContract> {
             deployedContractInfo.setManagerAddress("");
             deployedContractInfo.setContractName("UserContract");
             deployedContractInfo.setContractAddress(send.getContractAddress());
-            infoRepository.save(deployedContractInfo);
+            deployedContractAddress.setContractAddress(DeployedContracts.USER_CONTRACT,send.getContractAddress());
             log.info("deploy contact "+ deployedContractInfo.getContractAddress());
             return send;
         }

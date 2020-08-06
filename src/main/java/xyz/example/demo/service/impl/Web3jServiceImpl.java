@@ -14,6 +14,7 @@ import xyz.example.demo.models.User;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
+import xyz.example.demo.web3j.EthCallUtil;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -49,8 +50,7 @@ public class Web3jServiceImpl implements Web3jService {
     DeviceContract deviceContract;
     @Autowired
     ContractGasProvider contractGasProvider;
-
-    @Override
+    @Autowired
     public boolean submitReport() {
         return false;
     }
@@ -61,7 +61,7 @@ public class Web3jServiceImpl implements Web3jService {
     }
 
     @Override
-    public List<CrowdBCTask> getAllTask(String userName) {
+    public List<CrowdBCTask> getTask(String userName) {
         return null;
     }
 
@@ -78,12 +78,5 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public void register(User user) {
         userContract.register(user.getAddress(), user.getUsername(), user.getPassword(), "");
-//        String contractAddress = deployedContractInfoRepository.findByContractNameOrderByIdDesc("RegisterContract").get(0).getContractAddress();
-//        /**
-//         * user 是当前登录的用户
-//         */
-//        User user1 = userTokenUtil.getUser();
-//
-//        UserContract load = UserContract.load(contractAddress, web3j, Credentials.create(user1.getPrivateKey()), contractGasProvider);
     }
 }
