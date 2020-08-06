@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import xyz.example.demo.bean.JwtResponse;
 import xyz.example.demo.bean.LoginRequest;
 import xyz.example.demo.bean.SignUpRequest;
+import xyz.example.demo.contract.DeviceContract;
+import xyz.example.demo.contract.TaskContract;
+import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.exception.UserAlreadyExistsException;
 import xyz.example.demo.models.ERole;
 import xyz.example.demo.models.Role;
@@ -32,10 +35,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/auth")
 @Api(tags = "处理用户管理")
 public class AuthController {
-//    @Autowired
-//    Register register;
-//    @Autowired
-//    UserSummary userSummary;
+    @Autowired
+    UserContract userContract;
+    @Autowired
+    TaskContract taskContract;
+    @Autowired
+    DeviceContract deviceContract;
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -139,7 +144,7 @@ public class AuthController {
         user.setPrivateKey(signUpRequest.getPrivateKey());
         userRepository.save(user);
 //        register.register(user.getAddress(), user.getUsername(), user.getPassword(), "").send();
-
+        userContract.register(signUpRequest.getAddress(),signUpRequest.getUsername(),signUpRequest.getPassword(),"").send();
         return "User registered successfully!";
 //        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
