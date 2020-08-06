@@ -15,6 +15,7 @@ import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
 
 import java.util.List;
+
 @Service
 public class Web3jServiceImpl implements Web3jService {
     Web3j web3j;
@@ -70,5 +71,10 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public boolean submitTask(CrowdBCTask crowdBCTask) {
         return false;
+    }
+
+    @Override
+    public void register(User user) {
+        userContract.register(user.getAddress(), user.getUsername(), user.getPassword(), "");
     }
 }
