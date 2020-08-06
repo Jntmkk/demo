@@ -1,8 +1,12 @@
 package xyz.example.demo.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import xyz.example.demo.contract.DeviceContract;
+import xyz.example.demo.contract.TaskContract;
+import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.DeployedContractInfo;
 import xyz.example.demo.models.User;
@@ -32,6 +36,15 @@ public class Web3jServiceImpl implements Web3jService {
         this.deployedContractInfoRepository = deployedContractInfoRepository;
     }
 
+    /**
+     * 合约实例
+     */
+    @Autowired
+    UserContract userContract;
+    @Autowired
+    TaskContract taskContract;
+    @Autowired
+    DeviceContract deviceContract;
 
 
     @Override

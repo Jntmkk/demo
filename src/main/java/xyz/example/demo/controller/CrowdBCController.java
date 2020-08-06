@@ -24,6 +24,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
@@ -89,7 +90,7 @@ public class CrowdBCController {
 //        TaskContract load = TaskContract.load(task.getContractAddress(), web3j, Credentials.create(userTokenUtil.getUser().getPrivateKey()), contractGasProvider);
 //        TransactionReceipt send = userContract.getPostTaskList(userTokenUtil.getUserName()).send();
 //        web3j.ethCall(n)
-        Function function = new Function("getPostTaskList", Arrays.<Type>asList(), Arrays.<TypeReference<?>>asList(new TypeReference<Array<Uint8>>() {
+        Function function = new Function("getUserReputation", Arrays.<Type>asList(), Arrays.<TypeReference<?>>asList(new TypeReference<Array<Uint8>>() {
                                                                                                                    }
         ));
         Transaction ethCallTransaction = Transaction.createEthCallTransaction(userTokenUtil.getUser().getAddress(), deviceContract.getContractAddress(), null);
