@@ -3,12 +3,19 @@ package xyz.example.demo.controller;
 import io.swagger.annotations.Api;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import xyz.example.demo.contract.DeviceContract;
+import xyz.example.demo.contract.TaskContract;
+import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.User;
+import xyz.example.demo.repository.UserRepository;
 
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -16,8 +23,15 @@ import java.util.Set;
 @Validated
 @Api(tags = "user information")
 public class UserController {
-//    @Autowired
-//    private Register register;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    UserContract userContract;
+    @Autowired
+    TaskContract taskContract;
+    @Autowired
+    DeviceContract deviceContract;
+
     @Data
     public static class UserInfo {
         Set<String> roles = new HashSet<>();
@@ -29,8 +43,10 @@ public class UserController {
 
     @GetMapping("info")
     public User info() throws Exception {
-
-        return null;
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username).get();
+        return user;
     }
 
 }
