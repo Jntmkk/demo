@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.tx.gas.ContractGasProvider;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
@@ -14,6 +15,7 @@ import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -23,7 +25,6 @@ public class Web3jServiceImpl implements Web3jService {
      * 此凭证为默认为部署合约的凭证
      */
     Credentials credentials;
-    User user;
     UserTokenUtil userTokenUtil;
     /**
      * 获取已部署合约的信息，若有多个符合要求 按ID递减排序，也就是取一个就是获取最新的
@@ -46,7 +47,8 @@ public class Web3jServiceImpl implements Web3jService {
     TaskContract taskContract;
     @Autowired
     DeviceContract deviceContract;
-
+    @Autowired
+    ContractGasProvider contractGasProvider;
 
     @Override
     public boolean submitReport() {
@@ -76,5 +78,12 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public void register(User user) {
         userContract.register(user.getAddress(), user.getUsername(), user.getPassword(), "");
+//        String contractAddress = deployedContractInfoRepository.findByContractNameOrderByIdDesc("RegisterContract").get(0).getContractAddress();
+//        /**
+//         * user 是当前登录的用户
+//         */
+//        User user1 = userTokenUtil.getUser();
+//
+//        UserContract load = UserContract.load(contractAddress, web3j, Credentials.create(user1.getPrivateKey()), contractGasProvider);
     }
 }
