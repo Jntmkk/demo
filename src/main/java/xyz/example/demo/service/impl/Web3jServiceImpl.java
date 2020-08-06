@@ -1,6 +1,7 @@
 package xyz.example.demo.service.impl;
 
-import okhttp3.Credentials;
+import org.springframework.stereotype.Service;
+import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.DeployedContractInfo;
@@ -10,7 +11,7 @@ import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
 
 import java.util.List;
-
+@Service
 public class Web3jServiceImpl implements Web3jService {
     Web3j web3j;
     /**
@@ -24,10 +25,9 @@ public class Web3jServiceImpl implements Web3jService {
      */
     DeployedContractInfoRepository deployedContractInfoRepository;
 
-    public Web3jServiceImpl(Web3j web3j, Credentials credentials, User user, UserTokenUtil userTokenUtil, DeployedContractInfoRepository deployedContractInfoRepository) {
+    public Web3jServiceImpl(Web3j web3j, Credentials credentials, UserTokenUtil userTokenUtil, DeployedContractInfoRepository deployedContractInfoRepository) {
         this.web3j = web3j;
         this.credentials = credentials;
-        this.user = user;
         this.userTokenUtil = userTokenUtil;
         this.deployedContractInfoRepository = deployedContractInfoRepository;
     }
