@@ -28,7 +28,7 @@ public interface Web3jService {
      * @param userName
      * @return
      */
-    List<CrowdBCTask> getAllTask(String userName);
+    List<CrowdBCTask> getTask(String userName);
 
     User getUserInfo(String userName);
 

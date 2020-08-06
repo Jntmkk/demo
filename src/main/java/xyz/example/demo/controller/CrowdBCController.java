@@ -86,28 +86,15 @@ public class CrowdBCController {
             @ApiImplicitParam(name = "status", paramType = "query", required = false, dataType = "String", value = "任务状态")})
     @GetMapping("task")
     public List<CrowdBCTask> getTask(@PathVariable(required = false) String username, @PathVariable(required = false) String type, @PathVariable(required = false) CrowdBCTask.TaskStatus taskStatus) throws Exception {
-//        DeployedContractInfo task = contractInfoRepository.findByContractNameOrderByIdDesc("TaskContract").get(0);
-//        TaskContract load = TaskContract.load(task.getContractAddress(), web3j, Credentials.create(userTokenUtil.getUser().getPrivateKey()), contractGasProvider);
-//        TransactionReceipt send = userContract.getPostTaskList(userTokenUtil.getUserName()).send();
-//        web3j.ethCall(n)
-        Function function = new Function("getUserReputation", Arrays.<Type>asList(), Arrays.<TypeReference<?>>asList(new TypeReference<Array<Uint8>>() {
-                                                                                                                   }
-        ));
-        Transaction ethCallTransaction = Transaction.createEthCallTransaction(userTokenUtil.getUser().getAddress(), deviceContract.getContractAddress(), null);
-        EthCall send = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).send();
-        List<Type> decode = FunctionReturnDecoder.decode(send.getValue(), function.getOutputParameters());
+
+
         return crowdBCTaskRepository.findAll();
     }
 
     @PostMapping("task")
     public String submitTask(@RequestBody @Valid CrowdBCTask crowdBCTask) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
-        crowdBCTask.setCreatedDate(new Date());
 
-        deployTaskContract(crowdBCTask, username);
-        crowdBCTaskRepository.save(crowdBCTask);
-        return "success";
+        return null;
     }
 
     @ApiOperation(value = "发送onenet物联网请求")
