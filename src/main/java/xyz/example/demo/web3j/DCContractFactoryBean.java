@@ -30,6 +30,7 @@ public class DCContractFactoryBean extends ContractFactoryBean<DeviceContract> {
          * key.length==42 means that  the key is a address ,so invoke load method ,otherwise it is a secrete(length 64) invoke deploy method
          */
         if (key.length() == 42) {
+            deployedContractAddress.setContractAddress(DeployedContracts.DeviceContract,key);
             return DeviceContract.load(key, web3j, credentials, contractGasProvider);
         } else {
             DeviceContract send = DeviceContract.deploy(web3j, credentials, contractGasProvider).send();
@@ -38,7 +39,7 @@ public class DCContractFactoryBean extends ContractFactoryBean<DeviceContract> {
             deployedContractInfo.setManagerAddress("");
             deployedContractInfo.setContractName("DeviceContract");
             deployedContractInfo.setContractAddress(send.getContractAddress());
-            deployedContractAddress.setContractAddress(DeployedContracts.DEVICE_CONTRACT, send.getContractAddress());
+            deployedContractAddress.setContractAddress(DeployedContracts.DeviceContract, send.getContractAddress());
             log.info("deploy contact " + deployedContractInfo.getContractAddress());
             return send;
         }

@@ -29,16 +29,17 @@ public class TCContractFactoryBean extends ContractFactoryBean<TaskContract> {
          * key.length==42 means that  the key is a address ,so invoke load method ,otherwise it is a secrete(length 64) invoke deploy method
          */
         if (key.length() == 42) {
+            deployedContractAddress.setContractAddress(DeployedContracts.TaskContract,key);
             return TaskContract.load(key, web3j, credentials, contractGasProvider);
         } else {
-            String contractAddress = deployedContractAddress.getContractAddress(DeployedContracts.USER_CONTRACT);
+            String contractAddress = deployedContractAddress.getContractAddress(DeployedContracts.UserContract);
             TaskContract send = TaskContract.deploy(web3j, credentials, contractGasProvider,contractAddress).send();
             DeployedContractInfo deployedContractInfo = new DeployedContractInfo();
             deployedContractInfo.setManagerPrivateKey(key);
             deployedContractInfo.setManagerAddress("");
             deployedContractInfo.setContractName("TaskContract");
             deployedContractInfo.setContractAddress(send.getContractAddress());
-            deployedContractAddress.setContractAddress(DeployedContracts.TASK_CONTRACT,send.getContractAddress());
+            deployedContractAddress.setContractAddress(DeployedContracts.TaskContract,send.getContractAddress());
             log.info("deploy contact "+ deployedContractInfo.getContractAddress());
             return send;
         }

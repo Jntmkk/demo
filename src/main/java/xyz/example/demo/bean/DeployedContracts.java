@@ -1,13 +1,13 @@
 package xyz.example.demo.bean;
 
 public enum DeployedContracts {
-    USER_CONTRACT("UserContract"), TASK_CONTRACT("TaskContract"), DEVICE_CONTRACT("DeviceContract");
+    UserContract("UserContract"), TaskContract("TaskContract"), DeviceContract("DeviceContract");
+    String type;
 
-    DeployedContracts(String s) {
-
+    private DeployedContracts(String s) {
+        type = s;
     }
-
     public String getValue() {
-        return this.toString();
+        return type;
     }
 }
