@@ -433,28 +433,28 @@ contract TaskContract{
     }
 }
 
+//设备结构体
+struct Device {
+    string deviceName; //设备名
+    uint deviceId; //only one to ，设备id
+    string deviceType; //设备类型
+    string APIurl; //测试设备链接
+    string accessPlatform; //云平台名字
+    string description; //描述
+    DeviceTestType testType; //测试类型：线上、线下
+}
 
+//测试类型，
+enum DeviceTestType {
+    Online, //线上
+    Offline //线下
+}
 
-contract DeviceContract {
-    //设备结构体
-    struct Device {
-        string deviceName; //设备名
-        uint deviceId; //only one to ，设备id
-        string deviceType; //设备类型
-        string APIurl; //测试设备链接
-        string accessPlatform; //云平台名字
-        string description; //描述
-        DeviceTestType testType; //测试类型：线上、线下
-    }
-
-    //测试类型，
-    enum DeviceTestType {
-        Online, //线上
-        Offline //线下
-    }
-
+contract DeviceTestManagement {
     mapping(uint => Device) devicePool; //设备id到设备结构体的映射
     uint deviceNum; //设备数量
+    // Task task;
+    // TaskManagement taskMagContract;
     
     //结构体
     constructor() public {
