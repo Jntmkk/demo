@@ -24,6 +24,7 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import springfox.documentation.service.ApiListing;
 import xyz.example.demo.bean.DeployedContractAddress;
 import xyz.example.demo.bean.DeployedContracts;
+import xyz.example.demo.models.User;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
@@ -67,6 +68,11 @@ public class EthCallUtil {
         }
     }
 
+    public String getUserAddress(String username) throws NoSuchMethodException, IllegalAccessException, InstantiationException, ClassNotFoundException, InvocationTargetException, IOException {
+        User getUserInformation = getObject("getUserInformation", "0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE", User.class, username);
+        return getUserInformation.getAddress();
+    }
+
     @PostConstruct
     void init() throws IOException {
         for (String p : path.split(";")) {
@@ -85,9 +91,10 @@ public class EthCallUtil {
 
     /**
      * 获取合约函数的返回值，只适合用view修饰的函数。
-     * @param functionName 函数名
+     *
+     * @param functionName   函数名
      * @param accountAddress 查询人地址
-     * @param args 查询参数，类型需要与abi文件一致
+     * @param args           查询参数，类型需要与abi文件一致
      * @return 返回值列表，由于返回值没有名字所以返回值顺序与合约定义的一致。
      * @throws ClassNotFoundException
      * @throws NoSuchMethodException
@@ -140,6 +147,11 @@ public class EthCallUtil {
         String value = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).send().getValue();
         FunctionReturnDecoder.decode(value, function.getOutputParameters()).forEach(type -> results.add(type.getValue()));
         return results;
+    }
+
+    public <T> T getObject(String functionName, String accountAddress, Class<T> cls, Object... args) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
+        List<Object> value = getValue(functionName, accountAddress, args);
+        return getObject(value, cls);
     }
 
     public <T> T getObject(List<Object> list, Class<T> cls) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
