@@ -42,10 +42,14 @@ public class EthCallUtil {
     String baseNum = "org.web3j.abi.datatypes.generated.";
     String base = "org.web3j.abi.datatypes.";
     String path = "contract/UserContract.abi;contract/DeviceContract.abi;contract/TaskContract.abi";
-    @Autowired
+
+    public EthCallUtil(Web3j web3j, DeployedContractAddress deployedContractAddress) {
+        this.web3j = web3j;
+        this.deployedContractAddress = deployedContractAddress;
+    }
+
     Web3j web3j;
     Map<String, EthFunctionWrapper> maps = new HashMap<>();
-    @Autowired
     DeployedContractAddress deployedContractAddress;
 
 
@@ -79,6 +83,19 @@ public class EthCallUtil {
         }
     }
 
+    /**
+     * 获取合约函数的返回值，只适合用view修饰的函数。
+     * @param functionName 函数名
+     * @param accountAddress 查询人地址
+     * @param args 查询参数，类型需要与abi文件一致
+     * @return 返回值列表，由于返回值没有名字所以返回值顺序与合约定义的一致。
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws IOException
+     */
     public List<Object> getValue(String functionName, String accountAddress, Object... args) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
         if (!maps.containsKey(functionName))
             return null;
@@ -86,6 +103,9 @@ public class EthCallUtil {
         JSONArray o = (JSONArray) jsonObject.jsonObject.get("inputs");
         if (o.size() != args.length)
             return null;
+        /**
+         * 构造输入
+         */
         List<Type> input = new LinkedList<>();
         for (int i = 0; i < o.size(); i++) {
             JSONObject jsonObject1 = (JSONObject) o.get(i);
@@ -102,13 +122,14 @@ public class EthCallUtil {
             }
 
         }
+        /**
+         * 构造输出
+         */
         List<TypeReference<?>> output = new LinkedList<>();
         JSONArray outs = (JSONArray) jsonObject.jsonObject.get("outputs");
         for (Object out : outs) {
             JSONObject out1 = (JSONObject) out;
             String className = (String) out1.get("type");
-//            Class type = Class.forName(className);
-//            TypeReference<?> o1 = (TypeReference<?>) type.getConstructor(type).newInstance();
             TypeReference<?> o1 = TypeReference.makeTypeReference(className);
             output.add(o1);
         }
