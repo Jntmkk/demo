@@ -93,8 +93,8 @@ public class CrowdBCController {
 
     @PostMapping("task")
     public String submitTask(@RequestBody @Valid CrowdBCTask crowdBCTask) throws Exception {
-
-        return null;
+        crowdBCTaskRepository.save(crowdBCTask);
+        return "success";
     }
 
     @ApiOperation(value = "发送onenet物联网请求")

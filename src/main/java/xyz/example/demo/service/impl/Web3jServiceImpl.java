@@ -21,6 +21,9 @@ import java.util.List;
 
 @Service
 public class Web3jServiceImpl implements Web3jService {
+    @Autowired
+    EthCallUtil ethCallUtil;
+
     Web3j web3j;
     /**
      * 此凭证为默认为部署合约的凭证
@@ -50,6 +53,7 @@ public class Web3jServiceImpl implements Web3jService {
     DeviceContract deviceContract;
     @Autowired
     ContractGasProvider contractGasProvider;
+
     @Autowired
     public boolean submitReport() {
         return false;

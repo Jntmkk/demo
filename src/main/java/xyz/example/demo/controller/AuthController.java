@@ -1,7 +1,9 @@
 package xyz.example.demo.controller;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +18,7 @@ import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.exception.UserAlreadyExistsException;
+import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.ERole;
 import xyz.example.demo.models.Role;
 import xyz.example.demo.models.User;
@@ -23,13 +26,16 @@ import xyz.example.demo.repository.RoleRepository;
 import xyz.example.demo.repository.UserRepository;
 import xyz.example.demo.service.impl.UserDetailsImpl;
 import xyz.example.demo.utils.JwtUtils;
+import xyz.example.demo.web3j.EthCallUtil;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -52,13 +58,19 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder encoder;
-
+    @Autowired
+    EthCallUtil ethCallUtil;
     @Autowired
     JwtUtils jwtUtils;
 
     @ApiOperation(value = "登录")
     @PostMapping("/signin")
-    public JwtResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public JwtResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
+
+        List<Object> taskInformation = ethCallUtil.getValue("getTaskInformation", "0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE",new Long(0));
+        log.info(JSON.toJSONString(taskInformation));
+//        CrowdBCTask object = ethCallUtil.getObject(taskInformation, CrowdBCTask.class);
+
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
