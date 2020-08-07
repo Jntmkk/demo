@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -66,12 +67,9 @@ public class AuthController {
     @ApiOperation(value = "登录")
     @PostMapping("/signin")
     public JwtResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
-
-        List<Object> taskInformation = ethCallUtil.getValue("getTaskInformation", "0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE",new Long(0));
-        log.info(JSON.toJSONString(taskInformation));
-//        CrowdBCTask object = ethCallUtil.getObject(taskInformation, CrowdBCTask.class);
-
-
+        Boolean login = ethCallUtil.getObject("login", ethCallUtil.getUserAddress(loginRequest.getUsername()), Boolean.class, loginRequest.getUsername(), loginRequest.getPassword());
+        if (!login)
+            throw new RuntimeException("用户名与密码不匹配!");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -88,11 +86,6 @@ public class AuthController {
                 userDetails.getUsername(),
 //                userDetails.getEmail(),
                 roles);
-//        return ResponseEntity.ok(new JwtResponse(jwt,
-//                userDetails.getId(),
-//                userDetails.getUsername(),
-////                userDetails.getEmail(),
-//                roles));
     }
 
     @ApiOperation(value = "登出")
@@ -104,21 +97,8 @@ public class AuthController {
     @ApiOperation(value = "注册")
     @PostMapping("/signup")
     public String registerUser(@Valid @RequestBody SignUpRequest signUpRequest) throws Exception {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername()))
             throw new UserAlreadyExistsException();
-//            return "Error: Username is already taken!";
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Email is already in use!"));
-//        }
-
-        // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 encoder.encode(signUpRequest.getPassword()));
 
@@ -154,10 +134,9 @@ public class AuthController {
         user.setAddress(signUpRequest.getAddress());
         user.setRoles(roles);
         user.setPrivateKey(signUpRequest.getPrivateKey());
+        userContract.register(signUpRequest.getAddress(), signUpRequest.getUsername(), signUpRequest.getPassword(), "").send();
         userRepository.save(user);
-//        register.register(user.getAddress(), user.getUsername(), user.getPassword(), "").send();
-        userContract.register(signUpRequest.getAddress(),signUpRequest.getUsername(),signUpRequest.getPassword(),"").send();
         return "User registered successfully!";
-//        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+
     }
 }
