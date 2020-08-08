@@ -49,6 +49,7 @@ public class BaseGlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> 
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseBody
     public ResponseResult runtimeException(HttpServletRequest req, RuntimeException e) {
+        e.printStackTrace();
         return ResponseResult.error(e.getMessage());
     }
 
@@ -86,6 +87,7 @@ public class BaseGlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> 
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseBody
     public ResponseResult exceptionHandler(HttpServletRequest req, NullPointerException e) {
+        e.printStackTrace();
         return ResponseResult.error(CommonEnum.BODY_NOT_MATCH);
     }
 

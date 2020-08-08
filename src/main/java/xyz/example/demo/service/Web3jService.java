@@ -1,7 +1,6 @@
 package xyz.example.demo.service;
 
-import xyz.example.demo.TaskReport;
-import xyz.example.demo.controller.UserController;
+import xyz.example.demo.bean.TaskReport;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.User;
 
@@ -13,6 +12,10 @@ import java.util.List;
  * web3j 需要接口,暂定这些接口，接口参数待修正，可酌情修改
  */
 public interface Web3jService {
+    List<CrowdBCTask> getAcceptedTask(String username) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException;
+
+    List<CrowdBCTask> getAll() throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException;
+
     /**
      * 提交报告，参数不确定 自行确定
      *

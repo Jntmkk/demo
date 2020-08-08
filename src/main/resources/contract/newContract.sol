@@ -1,4 +1,6 @@
 pragma solidity ^0.6.0;
+pragma experimental ABIEncoderV2;
+
 
 contract UserContract{
     //用户结构体
@@ -168,6 +170,7 @@ contract TaskContract{
     //任务结构体
     struct Task{
         uint256 id; //任务id
+        string title;
         string posterName; //发布者名称
         address payable posterAddr; //发布者地址
         string description; //任务描述
@@ -187,6 +190,8 @@ contract TaskContract{
         // don't make it complex:mapping in struct,don't do this!
         // mapping(uint256 => Solution) solutionPool;
         uint256[] solutionList; //解决方案id列表
+
+        uint createDate;
     }
     
     //解决方案结构体
@@ -204,6 +209,7 @@ contract TaskContract{
     UserContract reg; //用户合约
     address managerAddr; //管理员地址
    
+    uint256[] taskIdList;
     uint256 taskNum; //任务数量
     mapping(uint256 => Task) taskPool; //任务id到任务结构体的映射
     uint256 solutionAllNum = 0; //解决方案总数
@@ -217,8 +223,8 @@ contract TaskContract{
         taskNum = 0;
     }
     
-    //发布任务，参数：发布者姓名，描述，押金，截止日期，最大工作者数，最小声誉，任务类型，任务保存文件路径
-    function postTask(string memory posterName,string memory description, uint deposit, 
+    //发布任务，参数：title,发布者姓名，描述，押金，截止日期，最大工作者数，最小声誉，任务类型，任务保存文件路径,创建日期
+    function postTask(string memory title, string memory posterName, string memory description, uint deposit, 
         uint deadline, uint maxWorkerNum, uint minReputation, uint taskType, string memory pointer) public payable{
             address payable posterAddr = msg.sender;
             require(reg.checkAddr(posterName, posterAddr) == true,"posterAddr must equal with posterName!");
@@ -245,11 +251,12 @@ contract TaskContract{
             //     mapping(uint256 => Solution) solutionPool;
             // }
             uint256[] memory solutionList;
-            taskPool[taskNum] = Task(taskNum,posterName,posterAddr,description,reward,deposit,deadline,maxWorkerNum,0,minReputation,taskType,Status.Pending,pointer,0,0,solutionList);
+            taskPool[taskNum] = Task(taskNum,title,posterName,posterAddr,description,reward,deposit,deadline,maxWorkerNum,0,minReputation,taskType,Status.Pending,pointer,0,0,solutionList,now);
             // The origin of the problem
             reg.addPostTask(taskPool[taskNum].posterName,taskNum);
             uint taskId = taskNum;
             updateStatus(taskId);
+            taskIdList.push(taskId);
             taskNum++;
             
     }
@@ -269,12 +276,17 @@ contract TaskContract{
         updateStatus(taskId);
     }
     
-    //获取任务信息，返回：任务描述，报酬，押金，截至日期，最大工作者数，当前工作者数，最低所需声誉，任务类型，任务状态，任务保存文件路径
-    function getTaskInformation(uint256 taskId) public returns  (string memory, uint, uint, uint, uint, uint, uint, uint, Status, string memory) {
+    //获取任务信息，返回: title, 任务描述，报酬，押金，截至日期，最大工作者数，当前工作者数，最低所需声誉，任务类型，任务状态，任务保存文件路径
+    function getTaskInformation(uint256 taskId) public returns  (string memory, string memory, uint, uint, uint, uint, uint, uint, uint, Status, string memory ) {
         // wait to modify
         updateStatus(taskId);
         Task memory task = taskPool[taskId];
-        return (task.description, task.reward, task.deposit, task.deadline, task.maxWorkerNum, task.currentWorkerNum,task.minReputation, task.taskType, task.status, task.pointer);
+        return (task.title, task.description, task.reward, task.deposit, task.deadline, task.maxWorkerNum, task.currentWorkerNum,task.minReputation, task.taskType, task.status, task.pointer);
+    }
+    
+    //所有任务
+    function getAllTaskId() public view returns (uint[] memory ){
+        return taskIdList;
     }
     
     //检查是否满足接收条件，满足会返回字符串“conglatulation”
@@ -433,28 +445,28 @@ contract TaskContract{
     }
 }
 
-//设备结构体
-struct Device {
-    string deviceName; //设备名
-    uint deviceId; //only one to ，设备id
-    string deviceType; //设备类型
-    string APIurl; //测试设备链接
-    string accessPlatform; //云平台名字
-    string description; //描述
-    DeviceTestType testType; //测试类型：线上、线下
-}
 
-//测试类型，
-enum DeviceTestType {
-    Online, //线上
-    Offline //线下
-}
 
-contract DeviceTestManagement {
+contract DeviceContract {
+    //设备结构体
+    struct Device {
+        string deviceName; //设备名
+        uint deviceId; //only one to ，设备id
+        string deviceType; //设备类型
+        string APIurl; //测试设备链接
+        string accessPlatform; //云平台名字
+        string description; //描述
+        DeviceTestType testType; //测试类型：线上、线下
+    }
+
+    //测试类型，
+    enum DeviceTestType {
+        Online, //线上
+        Offline //线下
+    }
+
     mapping(uint => Device) devicePool; //设备id到设备结构体的映射
     uint deviceNum; //设备数量
-    // Task task;
-    // TaskManagement taskMagContract;
     
     //结构体
     constructor() public {

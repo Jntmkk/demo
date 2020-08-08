@@ -1,4 +1,4 @@
-package xyz.example.demo;
+package xyz.example.demo.bean;
 
 import lombok.Data;
 

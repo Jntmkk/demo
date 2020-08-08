@@ -67,7 +67,7 @@ public class AuthController {
     @ApiOperation(value = "登录")
     @PostMapping("/signin")
     public JwtResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
-        Boolean login = ethCallUtil.getObject("login", ethCallUtil.getUserAddress(loginRequest.getUsername()), Boolean.class, loginRequest.getUsername(), loginRequest.getPassword());
+        Boolean login = ethCallUtil.getObject("login", ethCallUtil.getUserAddress(loginRequest.getUsername()), boolean.class, loginRequest.getUsername(), loginRequest.getPassword());
         if (!login)
             throw new RuntimeException("用户名与密码不匹配!");
         Authentication authentication = authenticationManager.authenticate(
@@ -132,7 +132,7 @@ public class AuthController {
             });
         }
         user.setAddress(signUpRequest.getAddress());
-        user.setRoles(roles);
+//        user.setRoles(roles);
         user.setPrivateKey(signUpRequest.getPrivateKey());
         userContract.register(signUpRequest.getAddress(), signUpRequest.getUsername(), signUpRequest.getPassword(), "").send();
         userRepository.save(user);

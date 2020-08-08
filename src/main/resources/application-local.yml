@@ -2,23 +2,30 @@ web3j:
   http-timeout-seconds: 300
   client-address: http://127.0.0.1:7545
   #  private
-  dc: "0xd518963389729b2f6dfbec21a18034a70a604c6d"
-  tc: "0x4a2fb652bb4d220650bd4a8115906d0e869d116b"
-  uc: "0xf630d3a406cecaaf64011d891694c2a586b473ab"
+  dc: "0xb8eb930141fc3213efaaa666fbd5ab346de7e8a6"
+  tc: "0x5fe1e513cc416e63fd12235a105a4cd758cd75c4"
+  uc: "0x7333d1c465e9c726236673e54a54f9c6e5111466"
 
 # App Properties
 bezkoder:
   app:
     jwtSecret: bezKoderSecretKey
     jwtExpirationMs: 86400000
-    key: d2db4a7b3fbea5a83bffccbbae420450641873c6d2ee65dd551f7b7636df4cb6
+    key: 255add5630429a646d01d7715655cc2e4ada179ec261b5f2221fe8b8db03e6e8
     #d0c05fba5a74bb3fb5af0cb3e01d0e9ac4f59d232f68e63f8a5986d2bcfb71da
 
 # local user
-#   admin1:
-#      addr 0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE
-#      key d2db4a7b3fbea5a83bffccbbae420450641873c6d2ee65dd551f7b7636df4cb6
-#   admin2:
-#     addr 0x9Bcda6C8bED7718D8808d81E11Ba744d5591861f
-#     key f59208fe75a662fd77177b1607a10b1a844eee188f3ee2dbda768b08be348479
-# key
+#  ACCOUNT ADDRESS
+#  0xcF49544570723B921d5a53021836806dDc1736E2
+#  PRIVATE KEY
+#  255add5630429a646d01d7715655cc2e4ada179ec261b5f2221fe8b8db03e6e8
+
+#  ACCOUNT ADDRESS
+#  0x9F324Ab92FBAD8D3c36FC9E4674bAf644259b73a
+#  PRIVATE KEY
+#  8ac3198335ac0d22066e6d66c98186239aeef9878d7da29741d14409cba9f8c4
+
+#  ACCOUNT ADDRESS
+#  0x436f4f84be98A548c97A88DFD08B1A7fc8E729AA
+#  PRIVATE KEY
+#  49aaa880d32f30bcb31eacf92f1fa8d7ba9dffe9659f151655a8f8e6d149c674
