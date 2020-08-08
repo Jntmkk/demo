@@ -49,9 +49,9 @@ public class User {
     @NotNull
     @Column(columnDefinition = "varchar(255)")
     private String privateKey;
-//    @OneToMany(targetEntity = BlockChainAccount.class,mappedBy = "user")
-//    @MapKey(name = "id")
-//    private Set<BlockChainAccount> accounts=new HashSet<>();
+    @OneToMany(targetEntity = BlockChainAccount.class,mappedBy = "user")
+    @MapKey(name = "id")
+    private Set<BlockChainAccount> accounts=new HashSet<>();
 
     public User() {
     }

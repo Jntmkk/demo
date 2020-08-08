@@ -24,6 +24,7 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import springfox.documentation.service.ApiListing;
 import xyz.example.demo.bean.DeployedContractAddress;
 import xyz.example.demo.bean.DeployedContracts;
+import xyz.example.demo.bean.Web3jUser;
 import xyz.example.demo.models.User;
 
 import javax.annotation.PostConstruct;
@@ -69,7 +70,7 @@ public class EthCallUtil {
     }
 
     public String getUserAddress(String username) throws NoSuchMethodException, IllegalAccessException, InstantiationException, ClassNotFoundException, InvocationTargetException, IOException {
-        User getUserInformation = getObject("getUserInformation", "0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE", User.class, username);
+        Web3jUser getUserInformation = getObject("getUserInformation", "0x61C048AaC3Cf99FE97217A8b28F6ce32EB8B8ADE", Web3jUser.class, username);
         return getUserInformation.getAddress();
     }
 
@@ -121,20 +122,29 @@ public class EthCallUtil {
                 className = baseNum + StringUtils.capitalize(className);
                 Type t = (Type) Class.forName(className).getConstructor(BigInteger.class).newInstance(BigInteger.valueOf((Long) args[i]));
                 input.add(t);
-            } else {
+            }
+            if (className.contains("string")) {
+                className = "Utf8String";
                 className = base + StringUtils.capitalize(className);
                 Class type = Class.forName(className);
-                Type o1 = (Type) type.getConstructor(type).newInstance(args[i]);
+                Type o1 = (Type) type.getConstructor(String.class).newInstance(args[i]);
+                input.add(o1);
+
+            }
+            if (className.contains("bool")) {
+                className = base + StringUtils.capitalize(className);
+                Class type = Class.forName(className);
+                Type o1 = (Type) type.getConstructor(Boolean.class).newInstance(args[i]);
                 input.add(o1);
             }
-
         }
         /**
          * 构造输出
          */
         List<TypeReference<?>> output = new LinkedList<>();
         JSONArray outs = (JSONArray) jsonObject.jsonObject.get("outputs");
-        for (Object out : outs) {
+        for (
+                Object out : outs) {
             JSONObject out1 = (JSONObject) out;
             String className = (String) out1.get("type");
             TypeReference<?> o1 = TypeReference.makeTypeReference(className);
@@ -145,7 +155,8 @@ public class EthCallUtil {
         List<Object> results = new ArrayList<>();
         Transaction ethCallTransaction = Transaction.createEthCallTransaction(accountAddress, deployedContractAddress.getContractAddress(jsonObject.deployedContracts), FunctionEncoder.encode(function));
         String value = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).send().getValue();
-        FunctionReturnDecoder.decode(value, function.getOutputParameters()).forEach(type -> results.add(type.getValue()));
+        FunctionReturnDecoder.decode(value, function.getOutputParameters()).
+                forEach(type -> results.add(type.getValue()));
         return results;
     }
 
@@ -155,17 +166,22 @@ public class EthCallUtil {
     }
 
     public <T> T getObject(List<Object> list, Class<T> cls) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        if (cls.isPrimitive())
+            return (T) list.get(0);
         Class<? super T> superclass = cls.getSuperclass();
-        if (superclass != Object.class)
-            throw new RuntimeException("转换类型只能继承Object");
+        if (superclass != null) {
+            if (superclass != Object.class)
+                throw new RuntimeException("待转化类只能直接继承自Object");
+        }
         Field[] declaredFields = cls.getDeclaredFields();
         if (declaredFields.length != list.size())
             throw new RuntimeException("待转化类属性数量与输入不匹配！");
         List<Object> classList = new LinkedList<>();
         List<Object> params = new LinkedList<>();
+
         for (int i = 0; i < declaredFields.length; i++) {
             Field declaredField = declaredFields[i];
-            classList.add(declaredField.getClass());
+            classList.add(declaredField.getType());
             Object cast = declaredField.getType().cast(list.get(i));
             params.add(cast);
         }
