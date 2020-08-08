@@ -1,5 +1,6 @@
 package xyz.example.demo.service;
 
+import xyz.example.demo.bean.TaskReportEvaluation;
 import xyz.example.demo.bean.TaskReport;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.User;
@@ -40,4 +41,5 @@ public interface Web3jService {
     void submitTask(String username, CrowdBCTask crowdBCTask) throws NoSuchMethodException, IllegalAccessException, InstantiationException, ClassNotFoundException, InvocationTargetException, IOException;
 
     void register(User user);
+    void evaluateReport(TaskReportEvaluation evaluation);
 }

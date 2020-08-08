@@ -1,13 +1,11 @@
 package xyz.example.demo.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.tx.gas.ContractGasProvider;
-import xyz.example.demo.bean.TaskReport;
-import xyz.example.demo.bean.DeployedContractAddress;
-import xyz.example.demo.bean.DeployedContracts;
-import xyz.example.demo.bean.Web3jCrowdBCTask;
+import xyz.example.demo.bean.*;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
@@ -115,5 +113,10 @@ public class Web3jServiceImpl2 implements Web3jService {
     @Override
     public void register(User user) {
         userContract.register(user.getAddress(), user.getUsername(), user.getPassword(), "");
+    }
+
+    @Override
+    public void evaluateReport(TaskReportEvaluation evaluation) {
+        
     }
 }
