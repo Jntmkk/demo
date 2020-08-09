@@ -60,16 +60,13 @@ public class CrowdBCController {
     DeployedContractAddress deployedContractAddress;
     @Autowired
     Web3j web3j;
+
     public CrowdBCController(Web3jService web3jService, OneNetService oneNetService, UserTokenUtil userTokenUtil, DeployedContractAddress deployedContractAddress) {
         this.web3jService = web3jService;
         this.oneNetService = oneNetService;
         this.userTokenUtil = userTokenUtil;
         this.deployedContractAddress = deployedContractAddress;
     }
-
-
-
-
 
     @ApiOperation(value = "获取任务列表", notes = "不加参数默认获取所有任务,可附加参数过滤")
     @ApiImplicitParams({@ApiImplicitParam(name = "username", paramType = "query", required = true, dataType = "String", value = "用户名", defaultValue = ""),
@@ -78,9 +75,9 @@ public class CrowdBCController {
     @GetMapping("task")
     public List<CrowdBCTask> getTask(@RequestParam(required = false) String username, @RequestParam(required = false) String type, @RequestParam(required = false) CrowdBCTask.TaskStatus taskStatus) throws Exception {
         List<CrowdBCTask> tasks = new LinkedList<>();
-        Function function=new Function("getPostTaskList",Arrays.<Type>asList(new Utf8String("admin")),Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
+        Function function = new Function("getPostTaskList", Arrays.<Type>asList(new Utf8String("admin")), Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
         }));
-        Transaction transaction = Transaction.createEthCallTransaction("0x9F324Ab92FBAD8D3c36FC9E4674bAf644259b73a",deployedContractAddress.getContractAddress(DeployedContracts.UserContract), FunctionEncoder.encode(function));
+        Transaction transaction = Transaction.createEthCallTransaction("0x9F324Ab92FBAD8D3c36FC9E4674bAf644259b73a", deployedContractAddress.getContractAddress(DeployedContracts.UserContract), FunctionEncoder.encode(function));
         EthCall send = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
         List<Type> decode = FunctionReturnDecoder.decode(send.getValue(), function.getOutputParameters());
         log.info(JSON.toJSONString(decode));
