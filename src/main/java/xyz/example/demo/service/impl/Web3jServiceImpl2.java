@@ -55,6 +55,11 @@ public class Web3jServiceImpl2 implements Web3jService {
         return TaskContract.load(deployedContractAddress.getContractAddress(DeployedContracts.TaskContract), web3j, Credentials.create(userRepository.findByUsername(username).get().getPrivateKey()), contractGasProvider);
     }
 
+    @Override
+    public List<TaskReport> getReport(String username, BigInteger taskId) {
+        return null;
+    }
+
     private List<CrowdBCTask> getTasksByIds(List<Object> lists, String address) throws NoSuchMethodException, IllegalAccessException, InstantiationException, ClassNotFoundException, InvocationTargetException, IOException {
         List<CrowdBCTask> crowdBCTasks = new LinkedList<>();
         for (Object o : lists) {
@@ -80,7 +85,7 @@ public class Web3jServiceImpl2 implements Web3jService {
 
     @Override
     public void submitReport(String username, TaskReport taskReport) {
-        loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), BigInteger.valueOf(taskReport.getBelongTo()));
+        loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongToTask());
     }
 
     @Override
