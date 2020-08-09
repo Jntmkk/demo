@@ -112,8 +112,8 @@ public class CrowdBCController {
     @ApiImplicitParams({@ApiImplicitParam(name = "命令", value = "cmd", required = true),
             @ApiImplicitParam(name = "设备ID", value = "deviceId", required = true)})
     @PostMapping("onenet/command")
-    public JSONObject command(@PathVariable String cmd, @PathVariable String deviceId) {
-        return oneNetService.sendCommand(deviceId, cmd);
+    public String command(@PathVariable String cmd, @PathVariable String deviceId, @PathVariable String apiKey) {
+        return oneNetService.sendCommand(deviceId, apiKey, cmd);
     }
 
 //    private void deployTaskContract(CrowdBCTask crowdBCTask, String username) throws Exception {
