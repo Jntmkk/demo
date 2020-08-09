@@ -1,5 +1,6 @@
 package xyz.example.demo.service;
 
+import javafx.concurrent.Task;
 import xyz.example.demo.bean.TaskReportEvaluation;
 import xyz.example.demo.bean.TaskReport;
 import xyz.example.demo.models.CrowdBCTask;
@@ -7,6 +8,7 @@ import xyz.example.demo.models.User;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -23,6 +25,8 @@ public interface Web3jService {
      * @return
      */
     void submitReport(String username, TaskReport taskReport);
+
+    List<TaskReport> getReport(String username, BigInteger taskId);
 
     /**
      * @param userName
@@ -41,5 +45,6 @@ public interface Web3jService {
     void submitTask(String username, CrowdBCTask crowdBCTask) throws NoSuchMethodException, IllegalAccessException, InstantiationException, ClassNotFoundException, InvocationTargetException, IOException;
 
     void register(User user);
+
     void evaluateReport(TaskReportEvaluation evaluation);
 }
