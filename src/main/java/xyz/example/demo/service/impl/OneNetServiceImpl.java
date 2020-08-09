@@ -6,12 +6,12 @@ import xyz.example.demo.service.OneNetService;
 @Service
 public class OneNetServiceImpl implements OneNetService {
     @Override
-    public JSONObject sendCommand(String deviceId, String cmd) {
+    public JSONObject sendCommand(String deviceId, String apiKey, String cmd) {
         return null;
     }
 
     @Override
-    public JSONObject getInfo(String deviceId) {
+    public JSONObject getInfo(String deviceId, String apiKey) {
         return null;
     }
 }
