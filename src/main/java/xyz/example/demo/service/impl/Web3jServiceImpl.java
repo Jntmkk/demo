@@ -68,7 +68,7 @@ public class Web3jServiceImpl implements Web3jService {
     // 用户登录
     @Override
     public Boolean login(User user) throws Exception {
-        return userContract.login(user.getUsername(),user.getPassword()).sendAsync().get().getValue();
+        return userContract.login(user.getUsername(), user.getPassword()).sendAsync().get().getValue();
     }
 
     //获取用户信息
@@ -82,10 +82,10 @@ public class Web3jServiceImpl implements Web3jService {
         user.setAddress(userInfo.get(0).getValue().toString());
         user.setUsername(userName);
         user.setProfile(userInfo.get(1).getValue().toString());
-        user.setRegisterTime(new Long(userInfo.get(2).getValue().toString()) );
-        user.setProcessTaskNum(new Long(userInfo.get(3).getValue().toString()) );
-        user.setFinishedTaskNum(new Long(userInfo.get(4).getValue().toString()) );
-        user.setReputation(new Integer(userInfo.get(5).getValue().toString()) );
+        user.setRegisterTime(new Long(userInfo.get(2).getValue().toString()));
+        user.setProcessTaskNum(new Long(userInfo.get(3).getValue().toString()));
+        user.setFinishedTaskNum(new Long(userInfo.get(4).getValue().toString()));
+        user.setReputation(new Integer(userInfo.get(5).getValue().toString()));
 
         return user;
     }
@@ -93,21 +93,21 @@ public class Web3jServiceImpl implements Web3jService {
     // 更新密码
     @Override
     public void updatePassword(String userName, String newPassword) throws Exception {
-        userContract.updatePassword(userName,newPassword).sendAsync().get();
+        userContract.updatePassword(userName, newPassword).sendAsync().get();
     }
 
     // 更新简介
     @Override
     public void updateProfile(String userName, String newProfile) throws Exception {
-        userContract.updatePassword(userName,newProfile).sendAsync().get();
+        userContract.updatePassword(userName, newProfile).sendAsync().get();
     }
 
     //发布任务
     @Override
     public void postTask(CrowdBCTask task, String posterName) throws Exception {
         taskContract.postTask(
-                task.getTitle(), posterName , task.getDescription(), task.getDeposit(),
-                task.getDeadline(),task.getMaxWorkerNum(),task.getMinReputation(),task.getTaskType(),
+                task.getTitle(), posterName, task.getDescription(), task.getDeposit(),
+                task.getDeadline(), task.getMaxWorkerNum(), task.getMinReputation(), task.getTaskType(),
                 task.getPointer(), task.getReward()
         ).sendAsync().get();
     }
@@ -121,15 +121,15 @@ public class Web3jServiceImpl implements Web3jService {
         task.setTitle(info.get(0).getValue().toString());
         task.setDescription(info.get(1).getValue().toString());
 
-        task.setReward( new BigInteger(info.get(2).getValue().toString()) );
-        task.setDeposit( new BigInteger(info.get(3).getValue().toString()) );
-        task.setDeadline( new BigInteger(info.get(4).getValue().toString()) );
-        task.setMaxWorkerNum( new BigInteger(info.get(5).getValue().toString()) );
-        task.setCurrentWorkerNum( new BigInteger(info.get(6).getValue().toString()) );
-        task.setMinReputation( new BigInteger(info.get(7).getValue().toString()) );
-        task.setTaskType( new BigInteger(info.get(8).getValue().toString()) );
+        task.setReward(new BigInteger(info.get(2).getValue().toString()));
+        task.setDeposit(new BigInteger(info.get(3).getValue().toString()));
+        task.setDeadline(new BigInteger(info.get(4).getValue().toString()));
+        task.setMaxWorkerNum(new BigInteger(info.get(5).getValue().toString()));
+        task.setCurrentWorkerNum(new BigInteger(info.get(6).getValue().toString()));
+        task.setMinReputation(new BigInteger(info.get(7).getValue().toString()));
+        task.setTaskType(new BigInteger(info.get(8).getValue().toString()));
 
-        task.setStatus( CrowdBCTask.TaskStatus.valueOf(info.get(9).getValue().toString() ) ); // ????
+        task.setStatus(CrowdBCTask.TaskStatus.valueOf(info.get(9).getValue().toString())); // ????
         task.setPointer(info.get(10).getValue().toString());
         task.setCreateDate(taskContract.getTaskCreateDate(taskId).sendAsync().get().getValue());
 
@@ -186,7 +186,7 @@ public class Web3jServiceImpl implements Web3jService {
     //接受任务,成功返回true;
     @Override
     public Boolean acceptTask(String username, BigInteger taskId, BigInteger deposit) throws Exception {
-        if(checkAcceptCondition(username,taskId) == true ){
+        if (checkAcceptCondition(username, taskId) == true) {
             loadTaskContract(username).acceptTask(username, taskId, deposit).sendAsync().get();
             return true;
         }
@@ -196,7 +196,7 @@ public class Web3jServiceImpl implements Web3jService {
     //检查是否满足接受报告条件
     @Override
     public Boolean checkSubmitReportCondition(String username, BigInteger taskId) throws Exception {
-        return loadTaskContract(username).checkSubmitCondition(username,taskId).sendAsync().get().getValue();
+        return loadTaskContract(username).checkSubmitCondition(username, taskId).sendAsync().get().getValue();
     }
 
     //查看报告详细信息
@@ -224,8 +224,8 @@ public class Web3jServiceImpl implements Web3jService {
     //提交报告
     @Override
     public Boolean submitReport(String username, TaskReport taskReport) throws Exception {
-        if(checkSubmitReportCondition(username,BigInteger.valueOf(taskReport.getBelongTo()))){
-            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), BigInteger.valueOf(taskReport.getBelongTo())).sendAsync().get();
+        if (checkSubmitReportCondition(username, taskReport.getBelongToTask())) {
+            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongToTask()).sendAsync().get();
             return true;
         }
         return false;

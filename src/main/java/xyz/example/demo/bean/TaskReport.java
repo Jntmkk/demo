@@ -9,6 +9,7 @@ public class TaskReport {
     BigInteger belongToTask;
     String solution;
     String pointer;
+    BigInteger level;
 
     public TaskReport() {
     }
