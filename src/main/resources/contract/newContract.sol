@@ -1,6 +1,4 @@
 pragma solidity ^0.6.0;
-pragma experimental ABIEncoderV2;
-
 
 contract UserContract{
     //用户结构体
@@ -282,6 +280,14 @@ contract TaskContract{
         updateStatus(taskId);
         Task memory task = taskPool[taskId];
         return (task.title, task.description, task.reward, task.deposit, task.deadline, task.maxWorkerNum, task.currentWorkerNum,task.minReputation, task.taskType, task.status, task.pointer);
+    }
+    
+    //获取任务日期
+    function getTaskCreateDate(uint256 taskId) public returns  (uint) {
+        // wait to modify
+        updateStatus(taskId);
+        Task memory task = taskPool[taskId];
+        return (task.createDate);
     }
     
     //所有任务

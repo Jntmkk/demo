@@ -1,6 +1,5 @@
 package xyz.example.demo.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -19,7 +18,6 @@ import xyz.example.demo.web3j.EthCallUtil;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,7 +77,7 @@ public class Web3jServiceImpl2 implements Web3jService {
     }
 
     @Override
-    public void submitReport(String username, TaskReport taskReport) {
+    public Boolean submitReport(String username, TaskReport taskReport) {
         loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), BigInteger.valueOf(taskReport.getBelongTo()));
     }
 
