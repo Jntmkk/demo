@@ -78,7 +78,7 @@ public class CrowdBCController {
     }
 
     @PostMapping("/file_upload")
-    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, RedirectAttributes redirectAttributes) {
+    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, RedirectAttributes redirectAttributes) throws Exception {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
             return "redirect:uploadResult";
@@ -110,36 +110,36 @@ public class CrowdBCController {
     @GetMapping("task")
     public List<CrowdBCTask> getTask(@RequestParam(required = false) String username, @RequestParam(required = false) String type, @RequestParam(required = false) CrowdBCTask.TaskStatus taskStatus) throws Exception {
         List<CrowdBCTask> tasks = new LinkedList<>();
-        Function function = new Function("getPostTaskList", Arrays.<Type>asList(new Utf8String("admin")), Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
-        }));
-        Transaction transaction = Transaction.createEthCallTransaction("0x9F324Ab92FBAD8D3c36FC9E4674bAf644259b73a", deployedContractAddress.getContractAddress(DeployedContracts.UserContract), FunctionEncoder.encode(function));
-        EthCall send = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
-        List<Type> decode = FunctionReturnDecoder.decode(send.getValue(), function.getOutputParameters());
-        log.info(JSON.toJSONString(decode));
-//        if (username == null) {
-//            return web3jService.getAll();
-//        }
-//        if (type != null) {
-//            if (type.equals("post")) {
-//                tasks = web3jService.getPostedTask(username);
-//            }
-//            if (type.equals("received")) {
-//                tasks = web3jService.getAcceptedTask(username);
-//            }
-//        }
-//        if (taskStatus != null) {
-//            tasks = tasks.stream().filter(task -> {
-//                if (task.getStatus() != taskStatus)
-//                    return false;
-//                else return true;
-//            }).collect(Collectors.toList());
-//        }
+//        Function function = new Function("getPostTaskList", Arrays.<Type>asList(new Utf8String("admin")), Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
+//        }));
+//        Transaction transaction = Transaction.createEthCallTransaction("0x9F324Ab92FBAD8D3c36FC9E4674bAf644259b73a", deployedContractAddress.getContractAddress(DeployedContracts.UserContract), FunctionEncoder.encode(function));
+//        EthCall send = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
+//        List<Type> decode = FunctionReturnDecoder.decode(send.getValue(), function.getOutputParameters());
+//        log.info(JSON.toJSONString(decode));
+        if (username == null) {
+            return web3jService.getAllTask();
+        }
+        if (type != null) {
+            if (type.equals("post")) {
+                tasks = web3jService.getPostedTask(username);
+            }
+            if (type.equals("received")) {
+                tasks = web3jService.getAcceptedTask(username);
+            }
+        }
+        if (taskStatus != null) {
+            tasks = tasks.stream().filter(task -> {
+                if (task.getStatus() != taskStatus)
+                    return false;
+                else return true;
+            }).collect(Collectors.toList());
+        }
         return tasks;
     }
 
     @PostMapping("task")
     public String submitTask(@RequestBody @Valid CrowdBCTask crowdBCTask) throws Exception {
-        web3jService.submitTask(userTokenUtil.getUserName(), crowdBCTask);
+        web3jService.postTask(crowdBCTask, userTokenUtil.getUserName());
         return "success";
     }
 
