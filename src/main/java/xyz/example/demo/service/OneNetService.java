@@ -12,7 +12,7 @@ public interface OneNetService {
      * @param deviceId 设备ID
      * @param apiKey   接口密钥
      * @param cmd      命令
-     * @return errorCode 错误代码（0为未出错）
+     * @return String  错误代码（0为未出错）
      * @apiNote JSONObject = JSON.parse(String)
      */
     String sendCommand(String deviceId, String apiKey, String cmd);
@@ -23,7 +23,7 @@ public interface OneNetService {
      *
      * @param deviceId  设备ID
      * @param apiKey    接口密钥
-     * @return lightStatus 灯光状态（硬件反馈）
+     * @return String   硬件反馈（灯光状态）
      */
     String getInfo(String deviceId, String apiKey);
 
