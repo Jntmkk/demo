@@ -11,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -29,6 +32,7 @@ import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import xyz.example.demo.bean.DeployedContractAddress;
 import xyz.example.demo.bean.DeployedContracts;
+import xyz.example.demo.bean.TaskReport;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
@@ -43,7 +47,12 @@ import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,6 +75,32 @@ public class CrowdBCController {
         this.oneNetService = oneNetService;
         this.userTokenUtil = userTokenUtil;
         this.deployedContractAddress = deployedContractAddress;
+    }
+
+    @PostMapping("/file_upload")
+    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, RedirectAttributes redirectAttributes) {
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+            return "redirect:uploadResult";
+        }
+        try {
+            byte[] bytes = file.getBytes();
+            File path2 = new File(ResourceUtils.getURL("classpath:").getPath());
+            File upload = new File(path2.getAbsolutePath(), "static/images/uplaod/");
+            if (!upload.exists())
+                upload.mkdirs();
+            Path path = Paths.get(upload.getAbsolutePath(), file.getOriginalFilename());
+
+//            Path path = Paths.get(ResourceUtils.getURL("classpath:").getPath() + file.getOriginalFilename());
+//            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            Files.write(path, bytes);
+            redirectAttributes.addFlashAttribute("message", "Successfully uploaded '" + file.getOriginalFilename() + "'");
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), "", "static/images/upload/" + file.getOriginalFilename()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/uploadResult";
     }
 
     @ApiOperation(value = "获取任务列表", notes = "不加参数默认获取所有任务,可附加参数过滤")

@@ -1,4 +1,6 @@
 spring:
+  resources:
+    static-locations: classpath:static/,file:static/
   servlet:
     multipart: true
   profiles:
