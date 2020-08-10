@@ -13,7 +13,7 @@ import java.util.Date;
 public class CrowdBCTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private BigInteger id;
 
 //    @ManyToOne
 //    private BlockChainAccount blockChainAccount;
@@ -58,6 +58,8 @@ public class CrowdBCTask {
     TaskStatus status;
     @NotNull
     String pointer;
+    @NotNull
+    BigInteger createDate;
 
 //    @NotNull
 //    @NotEmpty

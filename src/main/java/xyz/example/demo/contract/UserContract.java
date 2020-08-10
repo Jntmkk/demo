@@ -1,11 +1,16 @@
 package xyz.example.demo.contract;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
+
 import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.*;
+import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint8;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteCall;
@@ -83,8 +88,8 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> addAcceptTask(String username, BigInteger taskId) {
         final Function function = new Function(
                 FUNC_ADDACCEPTTASK, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.generated.Uint256(taskId)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Uint256(taskId)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -92,8 +97,8 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> addPostTask(String username, BigInteger taskId) {
         final Function function = new Function(
                 FUNC_ADDPOSTTASK, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.generated.Uint256(taskId)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Uint256(taskId)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -101,18 +106,19 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> checkAddr(String username, String addr) {
         final Function function = new Function(
                 FUNC_CHECKADDR, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.Address(160, addr)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Address(160, addr)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> getAcceptTask(String username) {
+    public RemoteFunctionCall<DynamicArray<Uint256>> getAcceptTask(String username) {
         final Function function = new Function(
                 FUNC_GETACCEPTTASK, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                Arrays.<Type>asList(new Utf8String(username)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {})
+        );
+        return executeRemoteCallSingleValueReturn(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> getManagerAddr() {
@@ -123,12 +129,12 @@ public class UserContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> getPostTaskList(String username) {
+    public RemoteFunctionCall<DynamicArray<Uint256>> getPostTaskList(String username) {
         final Function function = new Function(
                 FUNC_GETPOSTTASKLIST, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                Arrays.<Type>asList(new Utf8String(username)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {}));
+        return executeRemoteCallSingleValueReturn(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> getReputationAvg() {
@@ -142,52 +148,61 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> getUserAddr(String username) {
         final Function function = new Function(
                 FUNC_GETUSERADDR, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
+                Arrays.<Type>asList(new Utf8String(username)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> getUserInformation(String username) {
+    public RemoteFunctionCall<List<Type>> getUserInformation(String username) {
         final Function function = new Function(
                 FUNC_GETUSERINFORMATION, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                Arrays.<Type>asList(new Utf8String(username)),
+                Arrays.<TypeReference<?>>asList(
+                        new TypeReference<Address>() {
+                }, new TypeReference<Utf8String>() {
+                }, new TypeReference<Uint256>() {
+                }, new TypeReference<Uint256>() {
+                }, new TypeReference<Uint256>() {},
+                        new TypeReference<Uint256>() {}
+                ));
+        return executeRemoteCallMultipleValueReturn(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> getUserReputation(String username) {
         final Function function = new Function(
                 FUNC_GETUSERREPUTATION, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
+                Arrays.<Type>asList(new Utf8String(username)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> isRegister(String addr, String username) {
+    public RemoteFunctionCall<Bool>  isRegister(String addr, String username) throws IOException {
         final Function function = new Function(
                 FUNC_ISREGISTER, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, addr), 
-                new org.web3j.abi.datatypes.Utf8String(username)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                Arrays.<Type>asList(new Address(160, addr),
+                new Utf8String(username)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {
+                }));
+        return executeRemoteCallSingleValueReturn(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> login(String username, String password) {
+    public RemoteFunctionCall<Bool> login(String username, String password) throws IOException {
         final Function function = new Function(
                 FUNC_LOGIN, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.Utf8String(password)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                Arrays.<Type>asList(new Utf8String(username),
+                new Utf8String(password)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {
+                }));
+        return executeRemoteCallSingleValueReturn(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> register(String addr, String username, String password, String profile) {
         final Function function = new Function(
                 FUNC_REGISTER, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, addr), 
-                new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.Utf8String(password), 
-                new org.web3j.abi.datatypes.Utf8String(profile)), 
+                Arrays.<Type>asList(new Address(160, addr),
+                new Utf8String(username),
+                new Utf8String(password),
+                new Utf8String(profile)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -195,7 +210,7 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> updateFinishTaskNum(String username) {
         final Function function = new Function(
                 FUNC_UPDATEFINISHTASKNUM, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username)), 
+                Arrays.<Type>asList(new Utf8String(username)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -203,8 +218,8 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> updatePassword(String username, String newPassword) {
         final Function function = new Function(
                 FUNC_UPDATEPASSWORD, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.Utf8String(newPassword)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Utf8String(newPassword)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -212,8 +227,8 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> updateProfile(String username, String newProfile) {
         final Function function = new Function(
                 FUNC_UPDATEPROFILE, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.Utf8String(newProfile)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Utf8String(newProfile)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -221,8 +236,8 @@ public class UserContract extends Contract {
     public RemoteFunctionCall<TransactionReceipt> updateUserReputation(String username, BigInteger newReputation) {
         final Function function = new Function(
                 FUNC_UPDATEUSERREPUTATION, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(username), 
-                new org.web3j.abi.datatypes.generated.Uint256(newReputation)), 
+                Arrays.<Type>asList(new Utf8String(username),
+                new Uint256(newReputation)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
