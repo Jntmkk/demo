@@ -1,6 +1,6 @@
 package xyz.example.demo.service;
 
-import xyz.example.demo.bean.TransactionRecord;
+import org.web3j.protocol.core.methods.response.EthLog;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -10,11 +10,18 @@ import java.util.List;
  */
 public interface BrowserService {
 
+    //根据用户名查询地址
+    String getAddr(String username) throws Exception;
+
     //查看用户余额
     public BigInteger getUserBalance(String username) throws Exception;
 
-    //查看用户最近5条交易记录（余额变化）
-    public List<TransactionRecord> getTXRecord(String username) throws Exception;
+    //查看用户交易次数
+    BigInteger getUserTXCount(String username) throws Exception;
 
+    //查看用户de所有交易记录（余额变化）
+    public List<EthLog.LogResult> getUserTXRecord(String username) throws Exception;
 
+    //查询任务合约的所有交易记录
+    List<EthLog.LogResult> getTaskContractTXRecord() throws Exception;
 }
