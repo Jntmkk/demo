@@ -1,5 +1,6 @@
 package xyz.example.demo.service.impl;
 
+import javafx.concurrent.Task;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Type;
@@ -231,7 +232,12 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public List<TaskReport> getTaskAllReport(BigInteger taskId) throws Exception {
         List<TaskReport> list = new LinkedList<>();
-        //wait to modify
+        //查看某一个任务的所有SolutionId；
+        List<BigInteger> solutionIdList = (List<BigInteger>) taskContract.getAllTaskSolutionList(taskId).sendAsync().get();
+        for(BigInteger sId : solutionIdList) {
+            TaskReport taskReport = getReportInfo(sId);
+            list.add(taskReport);
+        }
         return list;
     }
 

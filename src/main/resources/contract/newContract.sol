@@ -295,6 +295,14 @@ contract TaskContract{
         return taskIdList;
     }
     
+    
+    //所有solution
+    function getAllTaskSolutionList(uint256 taskId) public view returns (uint[] memory ){
+        Task memory task = taskPool[taskId];
+        uint256[] memory solutionList = task.solutionList;
+        return solutionList;
+    }
+    
     //检查是否满足接收条件，满足会返回字符串“conglatulation”
     function checkAcceptCondition(string memory workerName,uint256 taskId) public returns (string memory) {
         updateStatus(taskId);
