@@ -23,15 +23,27 @@ public class CrowdBCTask {
     }
 
     public static enum TaskStatus {
-        PENDING("PENDING"),
-        UNACCEPTED("UNACCEPTED"),
-        ACCEPTED("ACCEPTED"),
-        EVALUATING("EVALUATING"),
-        COMPLETED("COMPLETED");
-        String s;
+        PENDING(0),
+        UNACCEPTED(1),
+        ACCEPTED(2),
+        EVALUATING(3),
+        COMPLETED(4);
+        int code;
 
-        TaskStatus(String s) {
-            this.s = s;
+        public int getCode() {
+            return code;
+        }
+
+        TaskStatus(int i) {
+            this.code = i;
+        }
+
+        public static TaskStatus get(int i) {
+            for (TaskStatus status : values()) {
+                if (status.getCode() == i)
+                    return status;
+            }
+            return null;
         }
     }
 
@@ -58,7 +70,7 @@ public class CrowdBCTask {
     TaskStatus status;
     @NotNull
     String pointer;
-    @NotNull
+    //    @NotNull
     BigInteger createDate;
 
 //    @NotNull

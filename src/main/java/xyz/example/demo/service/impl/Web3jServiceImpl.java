@@ -1,7 +1,9 @@
 package xyz.example.demo.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.tx.gas.ContractGasProvider;
@@ -17,6 +19,7 @@ import xyz.example.demo.utils.UserTokenUtil;
 import xyz.example.demo.web3j.EthCallUtil;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -105,7 +108,7 @@ public class Web3jServiceImpl implements Web3jService {
     //发布任务
     @Override
     public void postTask(CrowdBCTask task, String posterName) throws Exception {
-        taskContract.postTask(
+        loadTaskContract(posterName).postTask(
                 task.getTitle(), posterName, task.getDescription(), task.getDeposit(),
                 task.getDeadline(), task.getMaxWorkerNum(), task.getMinReputation(), task.getTaskType(),
                 task.getPointer(), task.getReward()
@@ -129,7 +132,7 @@ public class Web3jServiceImpl implements Web3jService {
         task.setMinReputation(new BigInteger(info.get(7).getValue().toString()));
         task.setTaskType(new BigInteger(info.get(8).getValue().toString()));
 
-        task.setStatus(CrowdBCTask.TaskStatus.valueOf(info.get(9).getValue().toString())); // ????
+        task.setStatus(CrowdBCTask.TaskStatus.get(Integer.valueOf(info.get(9).getValue().toString()).intValue())); // ????
         task.setPointer(info.get(10).getValue().toString());
         task.setCreateDate(taskContract.getTaskCreateDate(taskId).sendAsync().get().getValue());
 
@@ -158,21 +161,32 @@ public class Web3jServiceImpl implements Web3jService {
 //            idListNew.add( new BigInteger(idList.get(0).toString()) );
 //        }
 
-        List<BigInteger> idListNew = (List<BigInteger>) taskContract.getAllTaskId().sendAsync().get();
+        List<BigInteger> idListNew = convertDynamicArrayToList(taskContract.getAllTaskId().sendAsync().get());
         return getTasksByIds(idListNew);
     }
 
     //获取用户已接受任务
     @Override
     public List<CrowdBCTask> getAcceptedTask(String username) throws Exception {
-        List<BigInteger> list = (List<BigInteger>) userContract.getAcceptTask(username).sendAsync().get();
+        List<BigInteger> list = convertDynamicArrayToList(userContract.getAcceptTask(username).sendAsync().get());
         return getTasksByIds(list);
+    }
+
+    private List<BigInteger> convertDynamicArrayToList(DynamicArray<Uint256> dynamicArray) {
+        List<BigInteger> list = new LinkedList<>();
+        dynamicArray.getValue().stream().forEach(o -> {
+            list.add(o.getValue());
+        });
+        return list;
     }
 
     //获取用户已发布任务
     @Override
     public List<CrowdBCTask> getPostedTask(String username) throws Exception {
-        List<BigInteger> list = (List<BigInteger>) userContract.getPostTaskList(username).sendAsync().get();
+        List<BigInteger> list = new LinkedList<>();
+        userContract.getPostTaskList(username).sendAsync().get().getValue().stream().forEach(o -> {
+            list.add(o.getValue());
+        });
         return getTasksByIds(list);
     }
 
@@ -224,8 +238,8 @@ public class Web3jServiceImpl implements Web3jService {
     //提交报告
     @Override
     public Boolean submitReport(String username, TaskReport taskReport) throws Exception {
-        if (checkSubmitReportCondition(username, taskReport.getBelongToTask())) {
-            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongToTask()).sendAsync().get();
+        if (checkSubmitReportCondition(username, taskReport.getBelongsToTask())) {
+            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
             return true;
         }
         return false;

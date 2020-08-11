@@ -32,6 +32,7 @@ import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import xyz.example.demo.bean.DeployedContractAddress;
 import xyz.example.demo.bean.DeployedContracts;
+import xyz.example.demo.bean.OneNetCommandWrapper;
 import xyz.example.demo.bean.TaskReport;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
@@ -108,7 +109,7 @@ public class CrowdBCController {
             @ApiImplicitParam(name = "type", paramType = "query", required = false, dataType = "String", value = "接收的任务-received,发布的任务-post"),
             @ApiImplicitParam(name = "status", paramType = "query", required = false, dataType = "String", value = "任务状态")})
     @GetMapping("task")
-    public List<CrowdBCTask> getTask(@RequestParam(required = false) String username, @RequestParam(required = false) String type, @RequestParam(required = false) CrowdBCTask.TaskStatus taskStatus) throws Exception {
+    public List<CrowdBCTask> getTask(@RequestParam(required = false) Boolean isall, @RequestParam(required = false) String type, @RequestParam(required = false) CrowdBCTask.TaskStatus taskStatus) throws Exception {
         List<CrowdBCTask> tasks = new LinkedList<>();
 //        Function function = new Function("getPostTaskList", Arrays.<Type>asList(new Utf8String("admin")), Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
 //        }));
@@ -116,7 +117,8 @@ public class CrowdBCController {
 //        EthCall send = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
 //        List<Type> decode = FunctionReturnDecoder.decode(send.getValue(), function.getOutputParameters());
 //        log.info(JSON.toJSONString(decode));
-        if (username == null) {
+        String username = userTokenUtil.getUserName();
+        if (isall != null && isall) {
             return web3jService.getAllTask();
         }
         if (type != null) {
@@ -127,6 +129,7 @@ public class CrowdBCController {
                 tasks = web3jService.getAcceptedTask(username);
             }
         }
+        log.info(JSON.toJSONString(tasks));
         if (taskStatus != null) {
             tasks = tasks.stream().filter(task -> {
                 if (task.getStatus() != taskStatus)
@@ -139,16 +142,33 @@ public class CrowdBCController {
 
     @PostMapping("task")
     public String submitTask(@RequestBody @Valid CrowdBCTask crowdBCTask) throws Exception {
+        crowdBCTask.setCreateDate(BigInteger.valueOf(new Date().getTime()));
         web3jService.postTask(crowdBCTask, userTokenUtil.getUserName());
         return "success";
+    }
+
+    @GetMapping("task/report")
+    public List<TaskReport> getTaskReport(@RequestParam String taskId) throws Exception {
+        return web3jService.getTaskAllReport(BigInteger.valueOf(Integer.valueOf(taskId)));
+    }
+
+    @PostMapping("task/report")
+    public void getTaskReport(@RequestBody TaskReport taskReport) throws Exception {
+        web3jService.submitReport(userTokenUtil.getUserName(), taskReport);
+    }
+
+    @GetMapping("task/acceptance")
+    public void acceptTask(@RequestParam String taskId, @RequestParam String deposit) throws Exception {
+        web3jService.acceptTask(userTokenUtil.getUserName(), BigInteger.valueOf(Integer.valueOf(taskId)), BigInteger.valueOf(Integer.valueOf(deposit)));
     }
 
     @ApiOperation(value = "发送onenet物联网请求")
     @ApiImplicitParams({@ApiImplicitParam(name = "命令", value = "cmd", required = true),
             @ApiImplicitParam(name = "设备ID", value = "deviceId", required = true)})
     @PostMapping("onenet/command")
-    public String command(@PathVariable String cmd, @PathVariable String deviceId, @PathVariable String apiKey) {
-        return oneNetService.sendCommand(deviceId, apiKey, cmd);
+    public String command(@RequestBody @Valid OneNetCommandWrapper oneNetCommandWrapper) {
+        oneNetService.sendCommand(oneNetCommandWrapper.getDeviceId(), oneNetCommandWrapper.getApiKey(), oneNetCommandWrapper.getCmd());
+        return oneNetService.getInfo(oneNetCommandWrapper.getDeviceId(), oneNetCommandWrapper.getApiKey());
     }
 
 //    private void deployTaskContract(CrowdBCTask crowdBCTask, String username) throws Exception {
