@@ -30,10 +30,7 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
-import xyz.example.demo.bean.DeployedContractAddress;
-import xyz.example.demo.bean.DeployedContracts;
-import xyz.example.demo.bean.OneNetCommandWrapper;
-import xyz.example.demo.bean.TaskReport;
+import xyz.example.demo.bean.*;
 import xyz.example.demo.contract.DeviceContract;
 import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
@@ -43,6 +40,7 @@ import xyz.example.demo.models.User;
 import xyz.example.demo.repository.CrowdBCTaskRepository;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
 import xyz.example.demo.repository.UserRepository;
+import xyz.example.demo.service.BrowserService;
 import xyz.example.demo.service.OneNetService;
 import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
@@ -70,6 +68,8 @@ public class CrowdBCController {
     DeployedContractAddress deployedContractAddress;
     @Autowired
     Web3j web3j;
+    @Autowired
+    BrowserService browserService;
 
     public CrowdBCController(Web3jService web3jService, OneNetService oneNetService, UserTokenUtil userTokenUtil, DeployedContractAddress deployedContractAddress) {
         this.web3jService = web3jService;
@@ -160,6 +160,16 @@ public class CrowdBCController {
     @GetMapping("task/acceptance")
     public void acceptTask(@RequestParam String taskId, @RequestParam String deposit) throws Exception {
         web3jService.acceptTask(userTokenUtil.getUserName(), BigInteger.valueOf(Integer.valueOf(taskId)), BigInteger.valueOf(Integer.valueOf(deposit)));
+    }
+
+    @GetMapping("transaction")
+    public List<TransactionRecord> getTransaction() throws Exception {
+        return browserService.getTXRecord(userTokenUtil.getUserName());
+    }
+
+    @GetMapping("balance")
+    public BigInteger getBalance() throws Exception {
+        return browserService.getUserBalance(userTokenUtil.getUserName());
     }
 
     @ApiOperation(value = "发送onenet物联网请求")
