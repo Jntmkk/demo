@@ -233,8 +233,8 @@ public class Web3jServiceImpl implements Web3jService {
     public List<TaskReport> getTaskAllReport(BigInteger taskId) throws Exception {
         List<TaskReport> list = new LinkedList<>();
         //查看某一个任务的所有SolutionId；
-        List<BigInteger> solutionIdList = (List<BigInteger>) taskContract.getAllTaskSolutionList(taskId).sendAsync().get();
-        for(BigInteger sId : solutionIdList) {
+        List<BigInteger> solutionIdList = convertDynamicArrayToList(taskContract.getAllTaskSolutionList(taskId).sendAsync().get());
+        for (BigInteger sId : solutionIdList) {
             TaskReport taskReport = getReportInfo(sId);
             list.add(taskReport);
         }
