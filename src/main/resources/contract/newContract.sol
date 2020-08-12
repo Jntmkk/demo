@@ -346,6 +346,8 @@ contract TaskContract{
         solutionAllNum++;
         uint256 solutionId = solutionAllNum;
         solutionPool[solutionId] = Solution(solutionId,taskId,reg.getUserAddr(workerName),workerName,solution,pointer,now,0);
+        uint256[] storage solutionList = task.solutionList;
+        solutionList.push(solutionId);
         updateStatus(taskId);
     }
     
