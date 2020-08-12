@@ -80,7 +80,7 @@ public class CrowdBCController {
     }
 
     @PostMapping("/file_upload")
-    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, RedirectAttributes redirectAttributes) throws Exception {
+    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, @RequestParam("solution") String solution, RedirectAttributes redirectAttributes) throws Exception {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
             return "redirect:uploadResult";
@@ -97,7 +97,7 @@ public class CrowdBCController {
 //            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
             redirectAttributes.addFlashAttribute("message", "Successfully uploaded '" + file.getOriginalFilename() + "'");
-            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), "", "static/images/upload/" + file.getOriginalFilename()));
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/images/upload/" + file.getOriginalFilename()));
 
         } catch (IOException e) {
             e.printStackTrace();
