@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 @Data
 public class TaskReport {
+    BigInteger id;
     BigInteger belongsToTask;
     String solution;
     String pointer;
@@ -14,7 +15,8 @@ public class TaskReport {
     public TaskReport() {
     }
 
-    public TaskReport(BigInteger belongToTask, String solution, String pointer) {
+    public TaskReport(BigInteger id, BigInteger belongToTask, String solution, String pointer) {
+        this.id = id;
         this.belongsToTask = belongToTask;
         this.solution = solution;
         this.pointer = pointer;
