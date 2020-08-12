@@ -1,6 +1,7 @@
 package xyz.example.demo.service.impl;
 
 import javafx.concurrent.Task;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Type;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+@Slf4j
 @Service
 public class Web3jServiceImpl implements Web3jService {
 
@@ -222,7 +223,7 @@ public class Web3jServiceImpl implements Web3jService {
         String workerName = list.get(0).getValue().toString();
         taskReport.setSolution(list.get(1).getValue().toString());
         taskReport.setPointer(list.get(2).getValue().toString());
-        BigInteger submitDate = new BigInteger(list.get(0).getValue().toString());
+        BigInteger submitDate = new BigInteger(list.get(3).getValue().toString());
         taskReport.setLevel(new BigInteger(list.get(4).getValue().toString()));
 
         return taskReport;
@@ -233,6 +234,7 @@ public class Web3jServiceImpl implements Web3jService {
     public List<TaskReport> getTaskAllReport(BigInteger taskId) throws Exception {
         List<TaskReport> list = new LinkedList<>();
         //查看某一个任务的所有SolutionId；
+        log.info("solutinidlist:" + taskContract.getAllTaskSolutionList(taskId).sendAsync().get().getValue().toString());;
         List<BigInteger> solutionIdList = convertDynamicArrayToList(taskContract.getAllTaskSolutionList(taskId).sendAsync().get());
         for (BigInteger sId : solutionIdList) {
             TaskReport taskReport = getReportInfo(sId);
