@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 @Data
 public class TaskReportEvaluation {
+    BigInteger reportId;
     String category;
     BigInteger belongsToReportId;
     BigInteger belongsToTaskId;
