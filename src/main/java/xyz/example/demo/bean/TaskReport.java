@@ -15,8 +15,7 @@ public class TaskReport {
     public TaskReport() {
     }
 
-    public TaskReport(BigInteger id, BigInteger belongToTask, String solution, String pointer) {
-        this.id = id;
+    public TaskReport(BigInteger belongToTask, String solution, String pointer) {
         this.belongsToTask = belongToTask;
         this.solution = solution;
         this.pointer = pointer;
