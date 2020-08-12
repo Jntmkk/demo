@@ -54,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -171,6 +172,11 @@ public class CrowdBCController {
     @GetMapping("balance")
     public BigInteger getBalance() throws Exception {
         return browserService.getUserBalance(userTokenUtil.getUserName());
+    }
+    @PostMapping("task/evaluation")
+    public String evaluation(@RequestBody TaskReportEvaluation taskReportEvaluation) throws ExecutionException, InterruptedException {
+        web3jService.evaluateReport(userTokenUtil.getUserName(),taskReportEvaluation);
+        return "success";
     }
 
     @ApiOperation(value = "发送onenet物联网请求")

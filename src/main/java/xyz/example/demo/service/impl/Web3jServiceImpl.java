@@ -1,7 +1,6 @@
 package xyz.example.demo.service.impl;
 
 import javafx.concurrent.Task;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Type;
@@ -26,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-@Slf4j
 @Service
 public class Web3jServiceImpl implements Web3jService {
 
@@ -227,7 +225,6 @@ public class Web3jServiceImpl implements Web3jService {
         BigInteger submitDate = new BigInteger(list.get(3).getValue().toString());
         taskReport.setLevel(new BigInteger(list.get(4).getValue().toString()));
         taskReport.setBelongsToTask(new BigInteger(list.get(5).getValue().toString()));
-
         return taskReport;
     }
 
@@ -248,8 +245,7 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public Boolean submitReport(String username, TaskReport taskReport) throws Exception {
         if (checkSubmitReportCondition(username, taskReport.getBelongsToTask())) {
-//            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
-            loadTaskContract(username).submitSolution(username, "solution", taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
+            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
             return true;
         }
         return false;
