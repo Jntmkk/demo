@@ -52,7 +52,7 @@ public class User {
     @OneToMany(targetEntity = BlockChainAccount.class,mappedBy = "user")
     @MapKey(name = "id")
     private Set<BlockChainAccount> accounts=new HashSet<>();
-
+    String avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
     public User() {
     }
 
