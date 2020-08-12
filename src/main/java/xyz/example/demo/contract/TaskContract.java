@@ -84,13 +84,13 @@ public class TaskContract extends Contract {
         return executeRemoteCallTransaction(function, deposit);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> checkAcceptCondition(String workerName, BigInteger taskId) {
+    public RemoteFunctionCall<Utf8String> checkAcceptCondition(String workerName, BigInteger taskId) {
         final Function function = new Function(
                 FUNC_CHECKACCEPTCONDITION, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(workerName), 
-                new org.web3j.abi.datatypes.generated.Uint256(taskId)), 
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+                new org.web3j.abi.datatypes.generated.Uint256(taskId)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+        return executeRemoteCallSingleValueReturn(function);
     }
 
     public RemoteFunctionCall<Bool> checkSubmitCondition(String workerName, BigInteger taskId) {
@@ -98,7 +98,7 @@ public class TaskContract extends Contract {
                 FUNC_CHECKSUBMITCONDITION,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(workerName),
                         new org.web3j.abi.datatypes.generated.Uint256(taskId)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {})
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>(){} )
         );
         return executeRemoteCallSingleValueReturn(function);
     }
