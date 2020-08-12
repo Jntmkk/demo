@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 @Slf4j
 @Service
 public class Web3jServiceImpl implements Web3jService {
@@ -225,6 +226,7 @@ public class Web3jServiceImpl implements Web3jService {
         taskReport.setPointer(list.get(2).getValue().toString());
         BigInteger submitDate = new BigInteger(list.get(3).getValue().toString());
         taskReport.setLevel(new BigInteger(list.get(4).getValue().toString()));
+        taskReport.setBelongsToTask(new BigInteger(list.get(5).getValue().toString()));
 
         return taskReport;
     }
@@ -234,7 +236,6 @@ public class Web3jServiceImpl implements Web3jService {
     public List<TaskReport> getTaskAllReport(BigInteger taskId) throws Exception {
         List<TaskReport> list = new LinkedList<>();
         //查看某一个任务的所有SolutionId；
-        log.info("solutinidlist:" + taskContract.getAllTaskSolutionList(taskId).sendAsync().get().getValue().toString());;
         List<BigInteger> solutionIdList = convertDynamicArrayToList(taskContract.getAllTaskSolutionList(taskId).sendAsync().get());
         for (BigInteger sId : solutionIdList) {
             TaskReport taskReport = getReportInfo(sId);
@@ -247,7 +248,8 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public Boolean submitReport(String username, TaskReport taskReport) throws Exception {
         if (checkSubmitReportCondition(username, taskReport.getBelongsToTask())) {
-            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
+//            loadTaskContract(username).submitSolution(username, taskReport.getSolution(), taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
+            loadTaskContract(username).submitSolution(username, "solution", taskReport.getPointer(), taskReport.getBelongsToTask()).sendAsync().get();
             return true;
         }
         return false;
