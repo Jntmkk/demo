@@ -12,6 +12,8 @@ import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.User;
 import xyz.example.demo.repository.UserRepository;
+import xyz.example.demo.service.Web3jService;
+import xyz.example.demo.utils.UserTokenUtil;
 
 
 import java.util.HashSet;
@@ -31,7 +33,10 @@ public class UserController {
     TaskContract taskContract;
     @Autowired
     DeviceContract deviceContract;
-
+    @Autowired
+    Web3jService web3jService;
+    @Autowired
+    UserTokenUtil userTokenUtil;
     @Data
     public static class UserInfo {
         Set<String> roles = new HashSet<>();
@@ -43,10 +48,10 @@ public class UserController {
 
     @GetMapping("info")
     public User info() throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username).get();
-        return user;
+//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = userDetails.getUsername();
+//        User user = userRepository.findByUsername(username).get();
+        return web3jService.getUserInfo(userTokenUtil.getUserName());
     }
 
 }
