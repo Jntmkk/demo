@@ -27,6 +27,7 @@ import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
@@ -163,8 +164,8 @@ public class CrowdBCController {
     }
 
     @GetMapping("transaction")
-    public List<TransactionRecord> getTransaction() throws Exception {
-        return browserService.getTXRecord(userTokenUtil.getUserName());
+    public List<EthLog.LogResult> getTransaction() throws Exception {
+        return browserService.getUserTXRecord(userTokenUtil.getUserName());
     }
 
     @GetMapping("balance")
