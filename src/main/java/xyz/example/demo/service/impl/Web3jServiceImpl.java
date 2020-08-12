@@ -87,7 +87,7 @@ public class Web3jServiceImpl implements Web3jService {
         user.setUsername(userName);
         user.setProfile(userInfo.get(1).getValue().toString());
         user.setRegisterTime(new Long(userInfo.get(2).getValue().toString()));
-        user.setProcessTaskNum(new Long(userInfo.get(3).getValue().toString()));
+//        user.setProcessTaskNum(new Long(userInfo.get(3).getValue().toString()));
         user.setFinishedTaskNum(new Long(userInfo.get(4).getValue().toString()));
         user.setReputation(new Integer(userInfo.get(5).getValue().toString()));
 
