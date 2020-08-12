@@ -236,6 +236,7 @@ public class Web3jServiceImpl implements Web3jService {
         List<BigInteger> solutionIdList = convertDynamicArrayToList(taskContract.getAllTaskSolutionList(taskId).sendAsync().get());
         for (BigInteger sId : solutionIdList) {
             TaskReport taskReport = getReportInfo(sId);
+            taskReport.setId(sId);
             list.add(taskReport);
         }
         return list;
