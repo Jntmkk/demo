@@ -407,9 +407,9 @@ contract TaskContract{
     }
     
     //获取解决方案详细信息，参数：解决方案id
-    function getSolutionInfo(uint solutionId) public view returns (string memory, string memory, string memory, uint, uint){
+    function getSolutionInfo(uint solutionId) public view returns (string memory, string memory, string memory, uint, uint, uint){
         Solution memory solution = solutionPool[solutionId];
-        return (solution.workerName, solution.solution, solution.pointer, solution.submitTime, solution.level);
+        return (solution.workerName, solution.solution, solution.pointer, solution.submitTime, solution.level, solution.taskId);
     }
     
     //更新状态，后端无需调用
