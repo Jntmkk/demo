@@ -255,7 +255,7 @@ public class Web3jServiceImpl implements Web3jService {
     //评估报告，并返还押金，给予报酬
     @Override
     public void evaluateReport(String username, TaskReportEvaluation evaluation) throws ExecutionException, InterruptedException {
-        loadTaskContract(username).evaluateSolution(evaluation.getBelongsToTaskId(), evaluation.getBelongsToReportId(), evaluation.getLevel()).sendAsync().get();
+        loadTaskContract(username).evaluateSolution(evaluation.getBelongsToTaskId(), evaluation.getReportId(), evaluation.getLevel()).sendAsync().get();
     }
 
     //返还剩余报酬给任务发布者
