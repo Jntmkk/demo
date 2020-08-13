@@ -37,9 +37,11 @@ import xyz.example.demo.contract.TaskContract;
 import xyz.example.demo.contract.UserContract;
 import xyz.example.demo.models.CrowdBCTask;
 import xyz.example.demo.models.DeployedContractInfo;
+import xyz.example.demo.models.IotInfo;
 import xyz.example.demo.models.User;
 import xyz.example.demo.repository.CrowdBCTaskRepository;
 import xyz.example.demo.repository.DeployedContractInfoRepository;
+import xyz.example.demo.repository.IotInfoRepository;
 import xyz.example.demo.repository.UserRepository;
 import xyz.example.demo.service.BrowserService;
 import xyz.example.demo.service.OneNetService;
@@ -72,6 +74,8 @@ public class CrowdBCController {
     Web3j web3j;
     @Autowired
     BrowserService browserService;
+    @Autowired
+    IotInfoRepository iotInfoRepository;
 
     public CrowdBCController(Web3jService web3jService, OneNetService oneNetService, UserTokenUtil userTokenUtil, DeployedContractAddress deployedContractAddress) {
         this.web3jService = web3jService;
@@ -98,7 +102,7 @@ public class CrowdBCController {
 //            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
             redirectAttributes.addFlashAttribute("message", "Successfully uploaded '" + file.getOriginalFilename() + "'");
-            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/images/upload/" + file.getOriginalFilename()));
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/images/upload/" + file.getOriginalFilename().replace(" ", "_")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +125,7 @@ public class CrowdBCController {
 //        log.info(JSON.toJSONString(decode));
         String username = userTokenUtil.getUserName();
         if (isall != null && isall) {
-            return web3jService.getAllTask();
+            return loadAdditionalInformation(web3jService.getAllTask());
         }
         if (type != null) {
             if (type.equals("post")) {
@@ -139,13 +143,36 @@ public class CrowdBCController {
                 else return true;
             }).collect(Collectors.toList());
         }
-        return tasks;
+        return loadAdditionalInformation(tasks);
+    }
+
+    private CrowdBCTask loadAdditionalInformation(CrowdBCTask crowdBCTask) {
+        IotInfo byPath = iotInfoRepository.findByPath(crowdBCTask.getPointer()).get();
+        if (byPath != null) {
+            crowdBCTask.setPlatform(byPath.getPlatform());
+            crowdBCTask.setDeviceId(byPath.getDeviceId());
+            crowdBCTask.setDeviceToken(byPath.getDeviceToken());
+        }
+        return crowdBCTask;
+
+    }
+
+    private List<CrowdBCTask> loadAdditionalInformation(List<CrowdBCTask> crowdBCTasks) {
+        List<CrowdBCTask> list = new LinkedList<>();
+        for (CrowdBCTask task : crowdBCTasks)
+            list.add(loadAdditionalInformation(task));
+
+        return list;
+
     }
 
     @PostMapping("task")
     public String submitTask(@RequestBody @Valid CrowdBCTask crowdBCTask) throws Exception {
         crowdBCTask.setCreateDate(BigInteger.valueOf(new Date().getTime()));
         web3jService.postTask(crowdBCTask, userTokenUtil.getUserName());
+        IotInfo iotInfo = IotInfo.create(crowdBCTask.getDeviceId(), crowdBCTask.getDeviceToken(), crowdBCTask.getPlatform(), crowdBCTask.getPointer());
+        if (iotInfo.check())
+            iotInfoRepository.save(iotInfo);
         return "success";
     }
 
@@ -154,10 +181,10 @@ public class CrowdBCController {
         return web3jService.getTaskAllReport(BigInteger.valueOf(Integer.valueOf(taskId)));
     }
 
-    @PostMapping("task/report")
-    public void getTaskReport(@RequestBody TaskReport taskReport) throws Exception {
-        web3jService.submitReport(userTokenUtil.getUserName(), taskReport);
-    }
+//    @PostMapping("task/report")
+//    public void getTaskReport(@RequestBody TaskReport taskReport) throws Exception {
+//        web3jService.submitReport(userTokenUtil.getUserName(), taskReport);
+//    }
 
     @GetMapping("task/acceptance")
     public void acceptTask(@RequestParam String taskId, @RequestParam String deposit) throws Exception {
@@ -173,9 +200,10 @@ public class CrowdBCController {
     public BigInteger getBalance() throws Exception {
         return browserService.getUserBalance(userTokenUtil.getUserName());
     }
+
     @PostMapping("task/evaluation")
     public String evaluation(@RequestBody TaskReportEvaluation taskReportEvaluation) throws ExecutionException, InterruptedException {
-        web3jService.evaluateReport(userTokenUtil.getUserName(),taskReportEvaluation);
+        web3jService.evaluateReport(userTokenUtil.getUserName(), taskReportEvaluation);
         return "success";
     }
 
