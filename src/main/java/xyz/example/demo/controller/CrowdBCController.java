@@ -102,7 +102,7 @@ public class CrowdBCController {
 //            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
             redirectAttributes.addFlashAttribute("message", "Successfully uploaded '" + file.getOriginalFilename() + "'");
-            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/images/upload/" + file.getOriginalFilename().replace(" ", "_")));
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/" + file.getOriginalFilename().replace(" ", "_")));
 
         } catch (IOException e) {
             e.printStackTrace();
