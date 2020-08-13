@@ -366,7 +366,7 @@ contract TaskContract{
         // 计算奖励 wait to modify? 
         uint sendReward = task.deposit;
         // 平均奖励
-        uint reward = task.reward / task.maxWorkerNum + task.deposit;
+        uint reward = (task.reward * level) / (task.maxWorkerNum * 10) + task.deposit;
         // 高评估 高信誉 => 加信誉 + 奖励
         if (level >= 5 && rep >= reg.getReputationAvg()) {
             reg.updateUserReputation(workerName, rep + 1);
