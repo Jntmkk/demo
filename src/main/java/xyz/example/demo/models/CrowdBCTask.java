@@ -72,7 +72,12 @@ public class CrowdBCTask {
     String pointer;
     //    @NotNull
     BigInteger createDate;
-
+//    @NotNull
+    String deviceId;
+//    @NotNull
+    String platform;
+//    @NotNull
+    String deviceToken;
 //    @NotNull
 //    @NotEmpty
 //    private String category;
