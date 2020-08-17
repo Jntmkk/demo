@@ -8,7 +8,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.ResourceUtils;
@@ -91,18 +94,14 @@ public class CrowdBCController {
             return "redirect:uploadResult";
         }
         try {
-            byte[] bytes = file.getBytes();
-            File path2 = new File(ResourceUtils.getURL("classpath:").getPath());
-            File upload = new File(path2.getAbsolutePath(), "static/images/uplaod/");
-            if (!upload.exists())
-                upload.mkdirs();
-            Path path = Paths.get(upload.getAbsolutePath(), file.getOriginalFilename());
-
-//            Path path = Paths.get(ResourceUtils.getURL("classpath:").getPath() + file.getOriginalFilename());
-//            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
-            Files.write(path, bytes);
-            redirectAttributes.addFlashAttribute("message", "Successfully uploaded '" + file.getOriginalFilename() + "'");
-            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "static/" + file.getOriginalFilename().replace(" ", "_")));
+            ApplicationHome applicationHome = new ApplicationHome(getClass());
+            File rootPath = applicationHome.getDir();
+            File uploadDir = new File(Paths.get(rootPath.getAbsolutePath(), "static/upload/").toString());
+            if (!uploadDir.exists())
+                uploadDir.mkdirs();
+            File fileDestination = new File(Paths.get(uploadDir.getAbsolutePath(), file.getOriginalFilename().replace(" ", "_")).toString());
+            FileUtils.copyInputStreamToFile(file.getInputStream(), fileDestination);
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "upload/"+file.getOriginalFilename().replace(" ","_")));
 
         } catch (IOException e) {
             e.printStackTrace();
