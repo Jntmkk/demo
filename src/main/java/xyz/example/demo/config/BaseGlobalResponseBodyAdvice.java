@@ -102,6 +102,6 @@ public class BaseGlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResponseResult exceptionHandler(HttpServletRequest req, Exception e) {
-        return ResponseResult.error(CommonEnum.INTERNAL_SERVER_ERROR);
+        return ResponseResult.error("500", e.getMessage());
     }
 }
