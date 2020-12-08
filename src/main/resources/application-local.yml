@@ -2,36 +2,17 @@ web3j:
   http-timeout-seconds: 300
   client-address: http://127.0.0.1:7545
   #  private
-  dc: "0xea89fbfea38e3d426eae9a94ddf4bc7ad40628ce"
-  tc: "0x6463ee5f0cb593f289e43f09d8bd5acb9da941a5"
-  uc: "0x9f00ae7667cffb3700bf8838488c1dbb53a32684"
-
+  dc: "new"
+  tc: "new"
+  uc: "new"
 # App Properties
-bezkoder:
-  app:
-    jwtSecret: bezKoderSecretKey
-    jwtExpirationMs: 86400000
-    key: f58321420b5322e266a7364f9169faefff2f497265d90b1d5145071f301111ce
-    #d0c05fba5a74bb3fb5af0cb3e01d0e9ac4f59d232f68e63f8a5986d2bcfb71da
 
-# local user
 
-#  ACCOUNT ADDRESS
-#  0x0e9180DF93C93CC668c6AcCad2247552FFED3bbE
-#  PRIVATE KEY
-#  f58321420b5322e266a7364f9169faefff2f497265d90b1d5145071f301111ce
-#
-#  ACCOUNT ADDRESS
-#  0xc22626dddf14F492511426cbcafcf2547131BcB9
-#  PRIVATE KEY
-#  ab74c9ad1e8accf44260c2736a552665787ce3e0fa46737c7815d8bc1d90cea7
-#
-#  ACCOUNT ADDRESS
-#  0xA7A14F79b124231e50336d37C324834ba4A229c9
-#  PRIVATE KEY
-#  b29e80de2f00a343a8865d23e7bed29d10e0c8e8b5bfdaafec659d9d3a50525b
-#
-#  ACCOUNT ADDRESS
-#  0x1f82aF0569A70Ff23f1Ea38cf196Fc1Fcb76eC2A
-#  PRIVATE KEY
-#  54e914b23d3eda24e592ebf574fe23ee5b01e4a6d13e8b554e70cea2747f39ee
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  resources:
+    static-locations: file:${file.upload-dir},classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+file:
+  upload-dir: D:/user_file/

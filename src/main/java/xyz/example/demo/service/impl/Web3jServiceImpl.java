@@ -1,6 +1,6 @@
 package xyz.example.demo.service.impl;
 
-import javafx.concurrent.Task;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Type;
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@Slf4j
 public class Web3jServiceImpl implements Web3jService {
 
 
@@ -121,7 +122,7 @@ public class Web3jServiceImpl implements Web3jService {
     public CrowdBCTask getTaskInfo(BigInteger taskId) throws Exception {
         List<Type> info = taskContract.getTaskInformation(taskId).sendAsync().get();
         CrowdBCTask task = new CrowdBCTask();
-        task.setId(taskId);
+        task.setId(taskId.longValue());
         task.setTitle(info.get(0).getValue().toString());
         task.setDescription(info.get(1).getValue().toString());
 
@@ -195,6 +196,7 @@ public class Web3jServiceImpl implements Web3jService {
     @Override
     public Boolean checkAcceptCondition(String username, BigInteger taskId) throws Exception {
         String fullFill = taskContract.checkAcceptCondition(username, taskId).sendAsync().get().toString();
+        log.info(fullFill);
         return "conglatulation".equals(fullFill);
     }
 

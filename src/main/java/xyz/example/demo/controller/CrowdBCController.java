@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +52,7 @@ import xyz.example.demo.service.OneNetService;
 import xyz.example.demo.service.Web3jService;
 import xyz.example.demo.utils.UserTokenUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,7 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -79,6 +82,9 @@ public class CrowdBCController {
     BrowserService browserService;
     @Autowired
     IotInfoRepository iotInfoRepository;
+    @Value("${file.upload-dir}")
+    String uploadPath;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
 
     public CrowdBCController(Web3jService web3jService, OneNetService oneNetService, UserTokenUtil userTokenUtil, DeployedContractAddress deployedContractAddress) {
         this.web3jService = web3jService;
@@ -88,25 +94,53 @@ public class CrowdBCController {
     }
 
     @PostMapping("/file_upload")
-    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, @RequestParam("solution") String solution, RedirectAttributes redirectAttributes) throws Exception {
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
-            return "redirect:uploadResult";
+    public String upload(@RequestParam("file") MultipartFile uploadFile, @RequestParam("belongsToTask") String belongsToTask, @RequestParam("username") String username, @RequestParam("solution") String solution, RedirectAttributes redirectAttributes, HttpServletRequest request) throws Exception {
+        // 在 uploadPath 文件夹中通过日期对上传的文件归类保存
+        // 比如：/2019/06/06/cf13891e-4b95-4000-81eb-b6d70ae44930.png
+        String format = sdf.format(new Date());
+        File folder = new File(uploadPath);
+        if (!folder.isDirectory()) {
+            folder.mkdirs();
         }
+        // 对上传的文件重命名，避免文件重名
+        String oldName = uploadFile.getOriginalFilename();
+        int i = oldName.lastIndexOf(".");
+        String suffix = "";
+        if (i != -1)
+            suffix = oldName.substring(i);
+        String newName = UUID.randomUUID().toString() + suffix;
         try {
-            ApplicationHome applicationHome = new ApplicationHome(getClass());
-            File rootPath = applicationHome.getDir();
-            File uploadDir = new File(Paths.get(rootPath.getAbsolutePath(), "static/upload/").toString());
-            if (!uploadDir.exists())
-                uploadDir.mkdirs();
-            File fileDestination = new File(Paths.get(uploadDir.getAbsolutePath(), file.getOriginalFilename().replace(" ", "_")).toString());
-            FileUtils.copyInputStreamToFile(file.getInputStream(), fileDestination);
-            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "upload/"+file.getOriginalFilename().replace(" ","_")));
+            // 文件保存
+            uploadFile.transferTo(new File(folder, newName));
 
+            // 返回上传文件的访问路径
+            String filePath = request.getScheme() + "://" + request.getServerName()
+                    + ":" + request.getServerPort() + "/" + format + newName;
+            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, newName));
+
+            return filePath;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "redirect:/uploadResult";
+        return newName;
+        //        if (file.isEmpty()) {
+//            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+//            return "redirect:uploadResult";
+//        }
+//        try {
+//            ApplicationHome applicationHome = new ApplicationHome(getClass());
+//            File rootPath = applicationHome.getDir();
+//            File uploadDir = new File(Paths.get(rootPath.getAbsolutePath(),upload).toString());
+//            if (!uploadDir.exists())
+//                uploadDir.mkdirs();
+//            File fileDestination = new File(Paths.get(uploadDir.getAbsolutePath(), file.getOriginalFilename().replace(" ", "_")).toString());
+//            FileUtils.copyInputStreamToFile(file.getInputStream(), fileDestination);
+//            web3jService.submitReport(username, new TaskReport(BigInteger.valueOf(Integer.valueOf(belongsToTask)), solution, "upload/" + file.getOriginalFilename().replace(" ", "_")));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return "redirect:/uploadResult";
     }
 
     @ApiOperation(value = "获取任务列表", notes = "不加参数默认获取所有任务,可附加参数过滤")
@@ -187,7 +221,8 @@ public class CrowdBCController {
 
     @GetMapping("task/acceptance")
     public void acceptTask(@RequestParam String taskId, @RequestParam String deposit) throws Exception {
-        web3jService.acceptTask(userTokenUtil.getUserName(), BigInteger.valueOf(Integer.valueOf(taskId)), BigInteger.valueOf(Integer.valueOf(deposit)));
+        if (!web3jService.acceptTask(userTokenUtil.getUserName(), BigInteger.valueOf(Integer.valueOf(taskId)), BigInteger.valueOf(Integer.valueOf(deposit))))
+            throw new Exception("接收失败！");
     }
 
     @GetMapping("transaction")
